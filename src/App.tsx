@@ -1,25 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState} from 'react';
+import { BrowserRouter as Router, Switch, Redirect, Route } from 'react-router-dom';
+
 import './App.css';
 
+interface AppState {
+  token?: String;
+  a: String;
+}
+
 function App() {
+  const hostname = "localhost:3000";
+  const clientId: number = 53176;
+  const acceptTokenRoute = "accept_token";
+
+  const state = useState<AppState>({a:"A"});
+
+  const oAuthUrl
+    = "https://www.strava.com/oauth/authorize"
+    + `?client_id=${clientId}`
+    + "&response_type=code"
+    + `&redirect_uri=http://${hostname}/${acceptTokenRoute}`
+    + "&approval_prompt=force"
+    + "&scope=read";
+
+  const isLoggedIn = true;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route path={"/"+acceptTokenRoute}>
+          <div>APP</div>
+        </Route>
+        <Route>
+          {isLoggedIn
+            ? <Redirect to={{
+              pathname: "/map",
+              state: {
+                token: "token",
+              }
+            }}/>
+            : <a href={oAuthUrl}>Log in</a>
+          }
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
