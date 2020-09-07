@@ -3,7 +3,7 @@ import React from 'react';
 interface MapProps {
 }
 
-const Map = (props: MapProps) => {
+const Map__ = (props: MapProps) => {
   return (
     <div className="map">
       <p>Fetching Strava activities...</p>
@@ -11,4 +11,4 @@ const Map = (props: MapProps) => {
   );
 }
 
-export default Map;
+export default Map__;

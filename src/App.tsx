@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import { BrowserRouter as Router, Switch, Redirect, Route } from 'react-router-dom';
 import './App.css';
+import 'leaflet/dist/leaflet.css'
 import AuthButton from "./components/authbutton";
 import AuthStore from "./components/authstore";
-import Map from "./components/map";
 
 interface AppState {
   token?: String;
@@ -44,7 +44,7 @@ function App() {
         <Route>
           {isAuthenticated
             ? <div>Saved token is {authToken}
-                <Map />
+                <div>Map placeholder</div>
               </div>
             : <AuthButton oAuthUrl={oAuthUrl}/>
           }
