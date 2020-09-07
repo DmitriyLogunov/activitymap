@@ -3,55 +3,66 @@ import { BrowserRouter as Router, Switch, Redirect, Route } from 'react-router-d
 import './App.css';
 import 'leaflet/dist/leaflet.css'
 import AuthButton from "./components/authbutton";
-import AuthStore from "./components/authstore";
+import AuthCallbackHandler from "./components/authcallbackhandler";
+import SavedAuthentication from "./classes/saved_authentication";
 
 interface AppState {
   token?: String;
 }
 
 function App() {
-  const hostname = "localhost:3000";
-  const clientId: number = 53176;
-  const acceptTokenRoute = "accept_token";
-  const appRoute = "/";
+  try {
+    const acceptTokenRoute = "accept_token";
 
-  const state = useState<AppState>({});
+    const state = useState<AppState>({});
 
-  const oAuthUrl
-    = "https://www.strava.com/oauth/authorize"
-    + `?client_id=${clientId}`
-    + "&response_type=code"
-    + `&redirect_uri=http://${hostname}/${acceptTokenRoute}`
-    + "&approval_prompt=force"
-    + "&scope=read";
+    const oAuthUrl
+      = process.env.REACT_APP_STRAVA_AUTHENTICATION_URL
+      + `?client_id=${process.env.REACT_APP_STRAVA_CLIENT_ID}`
+      + "&response_type=code"
+      + `&redirect_uri=http://${process.env.REACT_APP_APPLICATION_HOSTNAME}/${acceptTokenRoute}`
+      + "&approval_prompt=force"
+      + "&scope=read,activity:read";
 
-  const authToken = localStorage.getItem('authToken') || null;
-  const authTokenExpiry = localStorage.getItem('authTokenExpiry') || null;
+    const storedAuthenticationdata = localStorage.getItem('authenticationData');
+    const authenticationData: SavedAuthentication | null = (storedAuthenticationdata
+      ? JSON.parse(storedAuthenticationdata)
+      : null
+    )
 
-  let isAuthenticated = false;
-  if (authToken && authTokenExpiry && (Date.now() < Number(authTokenExpiry))) {
-    isAuthenticated = true;
-  }
+    let isAuthenticated = false;
+    if (authenticationData && (Date.now() < authenticationData.expiresAt)) {
+      isAuthenticated = true;
+    }
 
-  return (
-    <Router>
-      <Switch>
-        <Route path={"/"+acceptTokenRoute}>
-          <p>Authenticating... Please wait to be redirected to <a href={appRoute}>{hostname}{appRoute}</a></p>
-          <AuthStore tokenValidForMinutes={360}/>
-          <Redirect to={appRoute} />
-        </Route>
-        <Route>
-          {isAuthenticated
-            ? <div>Saved token is {authToken}
-                <div>Map placeholder</div>
+    return (
+      <Router>
+        <Switch>
+          <Route path={"/" + acceptTokenRoute}>
+            <AuthCallbackHandler/>
+          </Route>
+          <Route>
+            {isAuthenticated && authenticationData
+              ? <div>Welcome {authenticationData.firstName}!<br/>
+                Map placeholder
               </div>
-            : <AuthButton oAuthUrl={oAuthUrl}/>
-          }
-        </Route>
-      </Switch>
-    </Router>
-  );
+              : <AuthButton oAuthUrl={oAuthUrl}/>
+            }
+          </Route>
+        </Switch>
+      </Router>
+    );
+  } catch (e) {
+    const showDebugInfo: boolean = process.env.REACT_APP_SHOW_DEBUG_INFO=='true';
+    return (
+      <div className="Error">Oops, a slight hiccup with an app...
+        {showDebugInfo
+          ? <p>Please see details below:<br/>{e}</p>
+          : <p></p>
+        }
+      </div>
+    )
+  }
 }
 
 export default App;

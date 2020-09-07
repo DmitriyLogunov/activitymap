@@ -1,5 +1,17 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Prerequisites
+
+- Node and NPM installed
+- Yarn installed
+- React-scripts installed (https://create-react-app.dev/)
+
+## Configuration
+
+Copy .env.example to .env and fill in a Strava API key (this will be changed in production deploy, secret keys should not be in .env)
+
+Modify rest of attributes if needed 
+
 ## Available Scripts
 
 In the project directory, you can run:
