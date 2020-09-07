@@ -1,19 +1,21 @@
 import React, {useState} from 'react';
 import { BrowserRouter as Router, Switch, Redirect, Route } from 'react-router-dom';
-
 import './App.css';
+import AuthButton from "./components/authbutton";
+import AuthStore from "./components/authstore";
+import Map from "./components/map";
 
 interface AppState {
   token?: String;
-  a: String;
 }
 
 function App() {
   const hostname = "localhost:3000";
   const clientId: number = 53176;
   const acceptTokenRoute = "accept_token";
+  const appRoute = "/";
 
-  const state = useState<AppState>({a:"A"});
+  const state = useState<AppState>({});
 
   const oAuthUrl
     = "https://www.strava.com/oauth/authorize"
@@ -23,23 +25,28 @@ function App() {
     + "&approval_prompt=force"
     + "&scope=read";
 
-  const isLoggedIn = true;
+  const authToken = localStorage.getItem('authToken') || null;
+  const authTokenExpiry = localStorage.getItem('authTokenExpiry') || null;
+
+  let isAuthenticated = false;
+  if (authToken && authTokenExpiry && (Date.now() < Number(authTokenExpiry))) {
+    isAuthenticated = true;
+  }
 
   return (
     <Router>
       <Switch>
         <Route path={"/"+acceptTokenRoute}>
-          <div>APP</div>
+          <p>Authenticating... Please wait to be redirected to <a href={appRoute}>{hostname}{appRoute}</a></p>
+          <AuthStore tokenValidForMinutes={360}/>
+          <Redirect to={appRoute} />
         </Route>
         <Route>
-          {isLoggedIn
-            ? <Redirect to={{
-              pathname: "/map",
-              state: {
-                token: "token",
-              }
-            }}/>
-            : <a href={oAuthUrl}>Log in</a>
+          {isAuthenticated
+            ? <div>Saved token is {authToken}
+                <Map />
+              </div>
+            : <AuthButton oAuthUrl={oAuthUrl}/>
           }
         </Route>
       </Switch>
