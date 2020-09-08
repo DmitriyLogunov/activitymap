@@ -2,6 +2,7 @@ import React from 'react';
 import {useHistory, RouteComponentProps, withRouter} from 'react-router-dom';
 import queryString from 'query-string';
 import SavedAuthentication from "../classes/saved_authentication";
+import StravaAPI from "../classes/strava_api";
 
 interface AuthStoreProps extends RouteComponentProps {
 }
@@ -11,29 +12,12 @@ const AuthCallbackHandler = (props: AuthStoreProps) => {
   const history = useHistory();
 
   async function obtainTokens(code: string) {
-    if (!process.env.REACT_APP_STRAVA_TOKEN_URL) {
-      throw("App misconfiguration: Token API URL not found. Check your .env file.");
-    }
-
-    const response = await fetch(process.env.REACT_APP_STRAVA_TOKEN_URL, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        client_id: process.env.REACT_APP_STRAVA_CLIENT_ID,
-        client_secret: process.env.REACT_APP_STRAVA_CLIENT_SECRET,
-        code: code,
-        grant_type: "authorization_code"
-      })
+    const responseData = await StravaAPI.post(process.env.REACT_APP_STRAVA_TOKEN_ROUTE, {
+      client_id: process.env.REACT_APP_STRAVA_CLIENT_ID,
+      client_secret: process.env.REACT_APP_STRAVA_CLIENT_SECRET,
+      code: code,
+      grant_type: "authorization_code"
     });
-
-    if (!response.ok) {
-      throw("Fetching of Token API failed: " + response.statusText);
-    }
-
-    const responseData = await response.json();
 
     const authenticationData: SavedAuthentication = {
       accessToken: responseData.access_token,

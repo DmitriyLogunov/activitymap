@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { BrowserRouter as Router, Switch, Redirect, Route } from 'react-router-dom';
 import './App.css';
 import 'leaflet/dist/leaflet.css'
 import AuthButton from "./components/authbutton";
 import AuthCallbackHandler from "./components/authcallbackhandler";
 import SavedAuthentication from "./classes/saved_authentication";
+import ActivityMap from "./components/activity_map";
 
 interface AppState {
   token?: String;
@@ -13,8 +14,6 @@ interface AppState {
 function App() {
   try {
     const acceptTokenRoute = "accept_token";
-
-    const state = useState<AppState>({});
 
     const oAuthUrl
       = process.env.REACT_APP_STRAVA_AUTHENTICATION_URL
@@ -44,7 +43,7 @@ function App() {
           <Route>
             {isAuthenticated && authenticationData
               ? <div>Welcome {authenticationData.firstName}!<br/>
-                Map placeholder
+                <ActivityMap />
               </div>
               : <AuthButton oAuthUrl={oAuthUrl}/>
             }
