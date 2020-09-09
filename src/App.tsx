@@ -2,10 +2,9 @@ import React, {useEffect, useState} from 'react';
 import { BrowserRouter as Router, Switch, Redirect, Route } from 'react-router-dom';
 import './App.css';
 import 'leaflet/dist/leaflet.css'
-import AuthButton from "./components/authbutton";
-import AuthCallbackHandler from "./components/authcallbackhandler";
 import SavedAuthentication from "./classes/saved_authentication";
 import ActivityMap from "./components/activity_map";
+import AuthorisationCallbackHandler from "./components/authorisation_callback_handler";
 
 interface AppState {
   token?: String;
@@ -38,14 +37,14 @@ function App() {
       <Router>
         <Switch>
           <Route path={"/" + acceptTokenRoute}>
-            <AuthCallbackHandler/>
+            <AuthorisationCallbackHandler />
           </Route>
           <Route>
             {isAuthenticated && authenticationData
               ? <div>Welcome {authenticationData.firstName}!<br/>
                 <ActivityMap />
               </div>
-              : <AuthButton oAuthUrl={oAuthUrl}/>
+              : <LoginButton url = {oAuthUrl}/>
             }
           </Route>
         </Switch>
@@ -63,5 +62,9 @@ function App() {
     )
   }
 }
+
+const LoginButton = (props: {url: string}) => <div className="loginButton">
+  <a href={props.url}>Log in</a>
+</div>;
 
 export default App;

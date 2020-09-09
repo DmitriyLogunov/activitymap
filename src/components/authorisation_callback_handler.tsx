@@ -7,7 +7,7 @@ import StravaAPI from "../classes/strava_api";
 interface AuthStoreProps extends RouteComponentProps {
 }
 
-const AuthCallbackHandler = (props: AuthStoreProps) => {
+const AuthorisationCallbackHandler = (props: AuthStoreProps) => {
   const mainAppRoute = "/";
   const history = useHistory();
 
@@ -18,9 +18,10 @@ const AuthCallbackHandler = (props: AuthStoreProps) => {
       code: code,
       grant_type: "authorization_code"
     });
-
+debugger;
     const authenticationData: SavedAuthentication = {
       accessToken: responseData.access_token,
+      tokenType: responseData.token_type,
       //athlete: responseData.athlete,
       firstName: responseData.athlete?.firstname,
       expiresAt: responseData.expires_at*1000,
@@ -49,4 +50,4 @@ const AuthCallbackHandler = (props: AuthStoreProps) => {
 
 }
 
-export default withRouter(AuthCallbackHandler);
+export default withRouter(AuthorisationCallbackHandler);

@@ -21,6 +21,7 @@ export interface AthleteData {
 
 export default interface SavedAuthentication {
   accessToken: string;
+  tokenType: string;
   athlete?: AthleteData;
   firstName: string;
   expiresAt: number;
