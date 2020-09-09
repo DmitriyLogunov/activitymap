@@ -31,7 +31,7 @@ const AuthCallbackHandler = (props: AuthStoreProps) => {
 
     setTimeout(() => {
       history.push(mainAppRoute);
-    }, 250);
+    }, 1000);
   }
 
   let getParameters = queryString.parse(props.location.search);

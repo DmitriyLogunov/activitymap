@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {LatLng, Map, Marker, Popup, TileLayer} from 'react-leaflet';
+import {Map, Marker, Popup, TileLayer} from 'react-leaflet';
+import {LatLng} from 'leaflet';
 
 export interface Activity {
 
@@ -11,16 +12,21 @@ interface ActivityMapViewProps {
 
 const ActivityMapView = (props: ActivityMapViewProps) => {
   const [state, setState] = useState({
-    lat: 51.505,
-    lng: -0.09,
+    lat: -37.8380,
+    lng: 145.1440,
     zoom: 13
   })
 
-  const mapCenter: LatLng = [state.lat, state.lng];
+  const mapCenter: LatLng = new LatLng(state.lat, state.lng);
 
   return (
     <div className="map">
-      {/*<Map center={mapCenter} zoom={state.zoom} />*/}
+      <Map center={mapCenter} zoom={state.zoom}>
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+        />
+      </Map>
     </div>
   );
 }
