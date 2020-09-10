@@ -1,27 +1,40 @@
-import React, {useEffect, useState} from "react";
-import ActivityMapView, {Activity} from "./activity_map_view";
-import StravaAPI from "../classes/strava_api";
+import React, {useState} from 'react';
+import {Map, Marker, Popup, TileLayer} from 'react-leaflet';
+import {LatLng} from 'leaflet';
 
-interface ActivityMapProps {
+export interface Activity {
 
 }
 
-const ActivityMap = (props: ActivityMapProps) => {
-  const [activities, setActivities] = useState(Array<Activity>(0));
+interface ActivityMapViewProps {
+  activities: Array<Activity>;
+}
 
-  useEffect(() => {
-    const retrieveActivities = async () => {
-      const newActivities =await StravaAPI.get('/athlete/activities');
-      setActivities(newActivities);
-    }
+const ActivityMapView = (props: ActivityMapViewProps) => {
+  const [state, setState] = useState({
+    lat: -37.8380,
+    lng: 145.1440,
+    zoom: 13
+  })
 
-    retrieveActivities();
+  if (props.activities.length>0) {
+    debugger;
+  }
+  // const polyline: L.Polyline = L.polyline().fromEncoded(props.activities[0].)
 
-  }, []);
+  // TODO: Centroid of selected activities, and have checkbox to uncheck and opt out of auto-centering
+  const mapCenter: LatLng = new LatLng(state.lat, state.lng);
 
   return (
-    <ActivityMapView activities={activities} />
-  )
+    <div className="map">
+      <Map center={mapCenter} zoom={state.zoom}>
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+        />
+      </Map>
+    </div>
+  );
 }
 
-export default ActivityMap;
+export default ActivityMapView;
