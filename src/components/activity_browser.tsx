@@ -1,28 +1,26 @@
 import React, {useEffect, useState} from "react";
-import ActivityMapView, {Activity} from "./activity_map_view";
-import StravaAPI from "../classes/strava_api";
+import ActivityMap from "./activity_map";
+import StravaAPI, {Activity} from "../classes/strava_api";
 
-interface ActivityMapProps {
+interface ActivityBrowserProps {
 
 }
 
-const ActivityMap = (props: ActivityMapProps) => {
+const ActivityBrowser = (props: ActivityBrowserProps) => {
   const [activities, setActivities] = useState(Array<Activity>(0));
 
   useEffect(() => {
     const setActivitiesToLatest = async () => {
-      const newActivities =await StravaAPI.get('/athlete/activities');
-
+      const newActivities: Array<Activity> = await StravaAPI.get('/athlete/activities');
       setActivities(newActivities);
     }
 
     setActivitiesToLatest();
-
   }, []);
 
   return (
-    <ActivityMapView activities={activities} />
+    <ActivityMap activities={activities} />
   )
 }
 
-export default ActivityMap;
+export default ActivityBrowser;

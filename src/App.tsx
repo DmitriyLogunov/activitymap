@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import { BrowserRouter as Router, Switch, Redirect, Route } from 'react-router-dom';
 import './App.css';
 import 'leaflet/dist/leaflet.css'
-import SavedAuthentication from "./classes/saved_authentication";
-import ActivityMap from "./components/activity_map";
+import {AuthenticationData} from "./classes/strava_api";
 import AuthorisationCallbackHandler from "./components/authorisation_callback_handler";
+import ActivityBrowser from "./components/activity_browser";
 
 interface AppState {
   token?: String;
@@ -23,7 +23,7 @@ function App() {
       + "&scope=read,activity:read";
 
     const storedAuthenticationdata = localStorage.getItem('authenticationData');
-    const authenticationData: SavedAuthentication | null = (storedAuthenticationdata
+    const authenticationData: AuthenticationData | null = (storedAuthenticationdata
       ? JSON.parse(storedAuthenticationdata)
       : null
     )
@@ -42,7 +42,7 @@ function App() {
           <Route>
             {isAuthenticated && authenticationData
               ? <div>Welcome {authenticationData.firstName}!<br/>
-                <ActivityMap />
+                <ActivityBrowser />
               </div>
               : <LoginButton url = {oAuthUrl}/>
             }

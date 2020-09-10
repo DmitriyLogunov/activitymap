@@ -1,20 +1,73 @@
-import SavedAuthentication from "./saved_authentication";
+export interface AthleteData {
+  badge_type_id: number;
+  city: string;
+  country: string;
+  created_at: string;
+  firstname: string;
+  follower: boolean | null;
+  friend: boolean | null;
+  id: number;
+  lastname: string;
+  premium: boolean;
+  profile: string; // url
+  profile_medium: string; // url
+  resource_state: number;
+  sex: string;
+  state: string;
+  summit: boolean;
+  updated_at: string;
+  username: string;
+}
+
+// TODO make names inline with Strava API response (convert case)
+export interface AuthenticationData {
+  accessToken: string;
+  tokenType: string;
+  athlete?: AthleteData;
+  firstName: string;
+  expiresAt: number;
+  refreshToken: string;
+}
+
+export interface Map {
+  id: string,
+  resource_state: number,
+  summary_polyline: string,
+}
+
+export interface Activity {
+  distance: number,
+  elapsed_time: number,
+  elev_high: number,
+  elev_low: number,
+  start_latlng: Array<number>,
+  start_latitude: number,
+  start_longitude: number,
+  end_latlng: Array<number>,
+  end_latitude: number,
+  end_longitude: number,
+  gear_id: string,
+  map: Map,
+  name: string,
+  type: string,
+  total_photo_count: number,
+  utc_offset: number,
+}
 
 export default class StravaAPI {
-
   // TODO store token in the application context and use from there
   private static getToken() {
     const storedAuthenticationdata = localStorage.getItem('authenticationData');
-    const authenticationData: SavedAuthentication | null = (storedAuthenticationdata
+    const authenticationData: AuthenticationData | null = (storedAuthenticationdata
         ? JSON.parse(storedAuthenticationdata)
         : null
     )
 
     let isAuthenticated = false;
     if (authenticationData && (Date.now() < authenticationData.expiresAt)) {
-      return authenticationData.accessToken;
+      return [authenticationData.accessToken, authenticationData.tokenType];
     } else {
-      return null;
+      return [null, null];
     }
   }
 
@@ -47,6 +100,8 @@ export default class StravaAPI {
       throw("App misconfiguration: API endpoint declaration not found. Check your .env file.");
     }
 
+    const [token, tokenType] = this.getToken();
+
     const response = await fetch(
       process.env.REACT_APP_STRAVA_API_BASE_URL + endpoint,
       {
@@ -55,7 +110,7 @@ export default class StravaAPI {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorisation': tokenType + 'Bearer ' + this.getToken(),
+        'Authorization': tokenType + ' ' + token,
       }
     });
 

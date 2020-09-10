@@ -1,8 +1,7 @@
 import React from 'react';
 import {useHistory, RouteComponentProps, withRouter} from 'react-router-dom';
 import queryString from 'query-string';
-import SavedAuthentication from "../classes/saved_authentication";
-import StravaAPI from "../classes/strava_api";
+import StravaAPI, {AuthenticationData} from "../classes/strava_api";
 
 interface AuthStoreProps extends RouteComponentProps {
 }
@@ -19,7 +18,7 @@ const AuthorisationCallbackHandler = (props: AuthStoreProps) => {
       grant_type: "authorization_code"
     });
 debugger;
-    const authenticationData: SavedAuthentication = {
+    const authenticationData: AuthenticationData = {
       accessToken: responseData.access_token,
       tokenType: responseData.token_type,
       //athlete: responseData.athlete,
