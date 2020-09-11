@@ -1,17 +1,18 @@
 import React, {useEffect, useState} from "react";
 import ActivityMap from "./activity_map";
-import StravaAPI, {Activity} from "../classes/strava_api";
+import StravaAPI from "../classes/strava/strava_api";
+import {SummaryActivity} from "../classes/strava/models";
 
 interface ActivityBrowserProps {
 
 }
 
 const ActivityBrowser = (props: ActivityBrowserProps) => {
-  const [activities, setActivities] = useState(Array<Activity>(0));
+  const [activities, setActivities] = useState(Array<SummaryActivity>(0));
 
   useEffect(() => {
     const setActivitiesToLatest = async () => {
-      const newActivities: Array<Activity> = await StravaAPI.get('/athlete/activities');
+      const newActivities: Array<SummaryActivity> = await StravaAPI.get('/athlete/activities');
       setActivities(newActivities);
     }
 

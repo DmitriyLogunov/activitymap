@@ -1,58 +1,38 @@
-export interface AthleteData {
-  badge_type_id: number;
-  city: string;
-  country: string;
-  created_at: string;
-  firstname: string;
-  follower: boolean | null;
-  friend: boolean | null;
-  id: number;
-  lastname: string;
-  premium: boolean;
-  profile: string; // url
-  profile_medium: string; // url
-  resource_state: number;
-  sex: string;
-  state: string;
-  summit: boolean;
-  updated_at: string;
-  username: string;
-}
+import { DetailedAthlete } from "./models/detailed-athlete";
 
-// TODO make names inline with Strava API response (convert case)
-export interface AuthenticationData {
+interface AuthenticationData {
   accessToken: string;
   tokenType: string;
-  athlete?: AthleteData;
+  athlete?: DetailedAthlete;
   firstName: string;
   expiresAt: number;
   refreshToken: string;
 }
-
-export interface Map {
-  id: string,
-  resource_state: number,
-  summary_polyline: string,
-}
-
-export interface Activity {
-  distance: number,
-  elapsed_time: number,
-  elev_high: number,
-  elev_low: number,
-  start_latlng: Array<number>,
-  start_latitude: number,
-  start_longitude: number,
-  end_latlng: Array<number>,
-  end_latitude: number,
-  end_longitude: number,
-  gear_id: string,
-  map: Map,
-  name: string,
-  type: string,
-  total_photo_count: number,
-  utc_offset: number,
-}
+//
+// export interface Map {
+//   id: string,
+//   resource_state: number,
+//   summary_polyline: string,
+// }
+//
+// export interface Activity {
+//   distance: number,
+//   elapsed_time: number,
+//   elev_high: number,
+//   elev_low: number,
+//   start_latlng: Array<number>,
+//   start_latitude: number,
+//   start_longitude: number,
+//   end_latlng: Array<number>,
+//   end_latitude: number,
+//   end_longitude: number,
+//   gear_id: string,
+//   map: Map,
+//   name: string,
+//   type: string,
+//   total_photo_count: number,
+//   utc_offset: number,
+// }
 
 export default class StravaAPI {
   // TODO store token in the application context and use from there

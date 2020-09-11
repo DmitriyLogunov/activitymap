@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { BrowserRouter as Router, Switch, Redirect, Route } from 'react-router-dom';
 import './App.css';
 import 'leaflet/dist/leaflet.css'
-import {AuthenticationData} from "./classes/strava_api";
+import StoredAuthenticationData from "./classes/stored_authentication_data";
 import AuthorisationCallbackHandler from "./components/authorisation_callback_handler";
 import ActivityBrowser from "./components/activity_browser";
 
@@ -22,14 +22,14 @@ function App() {
       + "&approval_prompt=force"
       + "&scope=read,activity:read";
 
-    const storedAuthenticationdata = localStorage.getItem('authenticationData');
-    const authenticationData: AuthenticationData | null = (storedAuthenticationdata
-      ? JSON.parse(storedAuthenticationdata)
+    const storedAuthenticationDataString = localStorage.getItem('authenticationData');
+    const storedAuthenticationData: StoredAuthenticationData | null = (storedAuthenticationDataString
+      ? JSON.parse(storedAuthenticationDataString)
       : null
     )
 
     let isAuthenticated = false;
-    if (authenticationData && (Date.now() < authenticationData.expiresAt)) {
+    if (storedAuthenticationData && (Date.now() < storedAuthenticationData.expiresAt)) {
       isAuthenticated = true;
     }
 
@@ -40,8 +40,8 @@ function App() {
             <AuthorisationCallbackHandler />
           </Route>
           <Route>
-            {isAuthenticated && authenticationData
-              ? <div>Welcome {authenticationData.firstName}!<br/>
+            {isAuthenticated && storedAuthenticationData
+              ? <div>Welcome {storedAuthenticationData.firstName}!<br/>
                 <ActivityBrowser />
               </div>
               : <LoginButton url = {oAuthUrl}/>
