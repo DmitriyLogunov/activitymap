@@ -8,31 +8,6 @@ interface AuthenticationData {
   expiresAt: number;
   refreshToken: string;
 }
-//
-// export interface Map {
-//   id: string,
-//   resource_state: number,
-//   summary_polyline: string,
-// }
-//
-// export interface Activity {
-//   distance: number,
-//   elapsed_time: number,
-//   elev_high: number,
-//   elev_low: number,
-//   start_latlng: Array<number>,
-//   start_latitude: number,
-//   start_longitude: number,
-//   end_latlng: Array<number>,
-//   end_latitude: number,
-//   end_longitude: number,
-//   gear_id: string,
-//   map: Map,
-//   name: string,
-//   type: string,
-//   total_photo_count: number,
-//   utc_offset: number,
-// }
 
 export default class StravaAPI {
   // TODO store token in the application context and use from there

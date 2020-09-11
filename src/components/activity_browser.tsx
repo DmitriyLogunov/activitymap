@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import ActivityMap from "./activity_map";
 import StravaAPI from "../classes/strava/strava_api";
 import {SummaryActivity} from "../classes/strava/models";
+import ActivitySelector from "./activity_selector";
 
 interface ActivityBrowserProps {
 
@@ -20,7 +21,10 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
   }, []);
 
   return (
-    <ActivityMap activities={activities} />
+    <>
+      <ActivitySelector activities={activities} />
+      <ActivityMap activities={activities} />
+    </>
   )
 }
 

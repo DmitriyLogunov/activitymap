@@ -1,5 +1,4 @@
 /* API implementation, enums and models copied from: https://github.com/amorgulis/strava-typescript-api */
-
 import axios from 'axios';
 import { StreamKeys } from './enums';
 import {
