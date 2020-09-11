@@ -18,7 +18,7 @@ const AuthorisationCallbackHandler = (props: AuthStoreProps) => {
       code: code,
       grant_type: "authorization_code"
     });
-debugger;
+
     const authenticationData: StoredAuthenticationData = {
       accessToken: responseData.access_token,
       tokenType: responseData.token_type,

@@ -1,0 +1,8 @@
+.side-panel {
+    border: 1px solid gray;
+    background: lightgray;
+    width: 25vw;
+    position: relative;
+    box-sizing: border-box;
+    z-index: 2;
+}

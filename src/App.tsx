@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { BrowserRouter as Router, Switch, Redirect, Route } from 'react-router-dom';
-import './App.css';
+import './styles/app.css';
 import 'leaflet/dist/leaflet.css'
 import StoredAuthenticationData from "./classes/stored_authentication_data";
 import AuthorisationCallbackHandler from "./components/authorisation_callback_handler";
@@ -20,7 +20,7 @@ function App() {
       + "&response_type=code"
       + `&redirect_uri=http://${process.env.REACT_APP_APPLICATION_HOSTNAME}/${acceptTokenRoute}`
       + "&approval_prompt=force"
-      + "&scope=read,activity:read";
+      + "&scope=read,activity:read"; // activity:read_all";
 
     const storedAuthenticationDataString = localStorage.getItem('authenticationData');
     const storedAuthenticationData: StoredAuthenticationData | null = (storedAuthenticationDataString

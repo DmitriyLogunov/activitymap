@@ -1,6 +1,5 @@
 import React from "react";
 import Activities from "../classes/activities";
-import activities from "../classes/activities";
 
 interface ActivitySummaryProps {
   activities: Activities;

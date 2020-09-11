@@ -1,0 +1,7 @@
+.bottom-panel {
+    border: 1px solid gray;
+    background: lightgray;
+    box-sizing: border-box;
+    width: 100vw;
+    z-index: 1;
+}
