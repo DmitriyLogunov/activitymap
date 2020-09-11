@@ -1,12 +1,12 @@
 import React from "react";
 import Activities from "../classes/activities";
 
-interface ActivitySelectorProps {
+interface ActivityfilterProps {
   activities: Activities;
 }
 
-const ActivitySelector = (props: ActivitySelectorProps) => {
-  return (<div className="activity-selector">
+const ActivityFilter = (props: ActivityfilterProps) => {
+  return (<div className="activity-filter">
     <ul>
       {props.activities.get().map(activity => {return (
         <li>{activity.summaryActivity.name}</li>
@@ -15,4 +15,4 @@ const ActivitySelector = (props: ActivitySelectorProps) => {
   </div>);
 }
 
-export default ActivitySelector;
+export default ActivityFilter;

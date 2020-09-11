@@ -2,10 +2,10 @@ import React, {useState} from 'react';
 import {Map, Marker, Polyline, Popup, TileLayer} from 'react-leaflet';
 import L, {LatLng} from 'leaflet';
 import polyUtil from 'polyline-encoded';
-import {SummaryActivity} from "../classes/strava/models";
+import Activities from "../classes/activities";
 
 interface ActivityMapProps {
-  activities: Array<SummaryActivity>;
+  activities: Activities;
 }
 
 const ActivityMap = (props: ActivityMapProps) => {
@@ -18,10 +18,10 @@ const ActivityMap = (props: ActivityMapProps) => {
   const polylines = new Array<Array<LatLng>>(0);
 
 
-  props.activities.map(activity => {
+  props.activities.getFiltered().map(activity => {
     const polyline = Array<LatLng>(0);
 
-    const polylineEncoded = activity.map.summary_polyline;
+    const polylineEncoded = activity.summaryActivity.map.summary_polyline;
     const latlngs: Array<[number, number]> = polyUtil.decode(polylineEncoded);
 
     latlngs.map(polyLineNode => {

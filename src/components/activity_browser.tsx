@@ -3,27 +3,31 @@ import ActivityMap from "./activity_map";
 import StravaAPI from "../classes/strava/strava_api";
 import {SummaryActivity} from "../classes/strava/models";
 import ActivitySelector from "./activity_selector";
+import Activities from "../classes/activities";
+import ActivityFilter from "./activity_filter";
+import ActivitySummary from "./activity_summary";
 
 interface ActivityBrowserProps {
-
 }
 
 const ActivityBrowser = (props: ActivityBrowserProps) => {
-  const [activities, setActivities] = useState(Array<SummaryActivity>(0));
+  const [activities, setActivities] = useState(new Activities());
 
   useEffect(() => {
-    const setActivitiesToLatest = async () => {
-      const newActivities: Array<SummaryActivity> = await StravaAPI.get('/athlete/activities');
+    (async () => {
+      const newStravaActivities: Array<SummaryActivity> = await StravaAPI.get('/athlete/activities');
+      const newActivities = new Activities();
+      newActivities.add(newStravaActivities, true);
       setActivities(newActivities);
-    }
-
-    setActivitiesToLatest();
+    })();
   }, []);
 
   return (
     <>
-      <ActivitySelector activities={activities} />
       <ActivityMap activities={activities} />
+      <ActivitySelector activities={activities} />
+      <ActivityFilter activities={activities} />
+      <ActivitySummary activities={activities} />
     </>
   )
 }

@@ -41,9 +41,7 @@ function App() {
           </Route>
           <Route>
             {isAuthenticated && storedAuthenticationData
-              ? <div>Welcome {storedAuthenticationData.firstName}!<br/>
-                <ActivityBrowser />
-              </div>
+              ? <ActivityBrowser />
               : <LoginButton url = {oAuthUrl}/>
             }
           </Route>
@@ -53,7 +51,7 @@ function App() {
   } catch (e) {
     const showDebugInfo: boolean = process.env.REACT_APP_SHOW_DEBUG_INFO=='true';
     return (
-      <div className="Error">Oops, a slight hiccup with an app...
+      <div className="Error">Oops, a slight hiccup... Please restart from the <a href="/">home page</a>.
         {showDebugInfo
           ? <p>Please see details below:<br/>{e}</p>
           : <p></p>
