@@ -8,15 +8,16 @@ import ActivityFilter from "./activity_filter";
 import ActivitySummary from "./activity_summary";
 import SidePanel from "./side_panel";
 import ActivitySelectionForm from "./activity_selection_form";
-import ActivitySelection from "../classes/activity_selection";
 import BottomPanel from "./bottom_panel";
+import ActivitySelectionData from "../classes/activity_selection_data";
+import ActivitySelectionWidget from "./activity_selection_widget";
 
 interface ActivityBrowserProps {
 }
 
 const ActivityBrowser = (props: ActivityBrowserProps) => {
   const [activities, setActivities] = useState(new Activities());
-  const [selection, setSelection] = useState<ActivitySelection>({
+  const [selection, setSelection] = useState<ActivitySelectionData>({
     after: null,
     before: null,
     maxCount: 50,
@@ -32,15 +33,26 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
     })();
   }, [selection]);
 
-  const handleSelectionApplyClick = (): void => {
+  const handleSelectionApplyClick = () => {
 
+  }
+
+  const handleSelectionUpdate = (index: number) => {
+
+  }
+
+  const defaultSelection: ActivitySelectionData = {
+    maxCount: 50,
+    before: null,
+    after: null,
+    includePrivate: false,
   }
 
   return (
     <div className="activity-browser">
       <ActivityMap activities={activities} />
       <SidePanel>
-        <ActivitySelectionForm selection={selection} onApplyClick={handleSelectionApplyClick} />
+        <ActivitySelectionWidget selectionList={[defaultSelection]} onSelectionUpdate={handleSelectionUpdate}/>
         <ActivityFilter activities={activities} />
       </SidePanel>
       <BottomPanel>

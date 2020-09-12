@@ -1,4 +1,4 @@
-export default interface ActivitySelection {
+export default interface ActivitySelectionData {
   after: number | null;
   before: number | null;
   maxCount: number;

@@ -1,23 +1,21 @@
 import React, {useState} from "react";
-import '../styles/activity_selector.css';
-import ActivitySelection from "../classes/activity_selection";
+import '../styles/activity_selection_form.css';
+import ActivitySelectionData from "../classes/activity_selection_data";
 
 interface ActivitySelectionFormProps {
-  selection: ActivitySelection;
-  onApplyClick: () => void;
+  selection: ActivitySelectionData;
+  onApplyClick: (newSelection: ActivitySelectionData) => void;
+  onCancelClick: () => void;
 }
 
 const ActivitySelectionForm = (props: ActivitySelectionFormProps) => {
-
-  const [maxCount, setMaxCount] = useState<number>(props.selection.maxCount);
-  const [after, setAfter] =  useState<number | null>(props.selection.after);
-  const [before, setBefore] =  useState<number | null>(props.selection.before);
-  const [includePrivate, setIncludePrivate] =  useState<boolean>(props.selection.includePrivate);
-
-  const [selection, setSelection] = useState<ActivitySelection>(props.selection);
+  const [state, setState] = useState<ActivitySelectionData>(props.selection);
 
   const handleCountChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setMaxCount(parseInt(event.target.value));
+    setState({
+      ...state,
+      maxCount: parseInt(event.target.value)
+    });
   }
 
   return (<div className="activity-selector">
@@ -34,10 +32,10 @@ const ActivitySelectionForm = (props: ActivitySelectionFormProps) => {
           name="count"
           min={1}
           max={100}
-          value={maxCount}
+          value={state.maxCount}
           onChange={handleCountChange}
         />
-        {maxCount}
+        {state.maxCount}
       </label>
 
       <br/>
@@ -50,7 +48,8 @@ const ActivitySelectionForm = (props: ActivitySelectionFormProps) => {
 
       <br/>
 
-      <input type="submit" value="Reload" onClick={() => props.onApplyClick()} />
+      <button onClick={() => props.onApplyClick(state)}>Apply</button>
+      <button onClick={() => props.onCancelClick()}>Cancel</button>
     </form>
   </div>);
 }
