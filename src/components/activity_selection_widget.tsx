@@ -1,93 +1,121 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import '../styles/activity_selection_form.css';
 import ActivitySelectionData from "../classes/activity_selection_data";
 import ActivitySelectionForm from "./activity_selection_form";
 
-export type ActivitySelectionList = Array<ActivitySelectionData>;
+export type SelectionDataArray = Array<ActivitySelectionData>;
 
 interface ActivitySelectionWidgetProps {
-  selectionList: ActivitySelectionList;
-  onSelectionUpdate: (index: number) => void;
+  selectionDataArray: SelectionDataArray;
+  onSelectionUpdate: (oldSelectionData: ActivitySelectionData, index: number) => void;
+}
+
+type EditorState = "view" | "edit" | "add";
+
+interface SelectionItem {
+  selectionData: ActivitySelectionData,
+  editorState: EditorState,
 }
 
 const ActivitySelectionWidget = (props: ActivitySelectionWidgetProps) => {
+  const [state, setState] = useState<Array<SelectionItem>>(Array<SelectionItem>(0));
 
-  const [selectionList, setSelectionList] = useState<ActivitySelectionList>(props.selectionList);
-  const [showEditorFor, setShowEditorFor] = useState<number>(-1);
+  useEffect(() => {
+    const initialState = Array<SelectionItem>(0);
+
+    props.selectionDataArray.map((selectionData) => {
+      initialState.push({
+        selectionData: selectionData,
+        editorState: "view"
+      })
+    })
+
+    setState(initialState);
+  }, []);
+
+  const toggleEditor = (index: number, newEditorState: EditorState) => {
+    const newState = state.slice();
+
+    newState[index] = {
+      ...newState[index],
+      editorState: newEditorState,
+    };
+
+    setState(newState);
+  }
 
   const handleEditClick = (index: number) => {
-    // TODO when clicked EDIT on other activity, process cancel on currently edited activity
-    // TODO or (BETTER!) allow editing multiple activities
-    setShowEditorFor(index);
+    toggleEditor(index, "edit");
   }
 
   const handleDeleteClick = (index: number) => {
+    const newState = state.slice();
     // TODO save this object and provide undo option for a few seconds after deletion
-    const deletedSelection = selectionList.splice(index, 1);
-    setSelectionList(selectionList.slice());
-    if (showEditorFor>index) {
-      setShowEditorFor(showEditorFor - 1);
-    }
+    const deletedSelection = newState.splice(index, 1);
+
+    setState(newState);
   }
 
-  // TODO delete item if edit was cancelled
   const handleAddSelectionClick = () => {
-    const newSelectionList = selectionList.slice();
+    const newState = state.slice();
+
     const newSelectionData: ActivitySelectionData = {
-      maxCount: 10,
+      maxCount: 1,
       before: null,
       after: null,
       includePrivate: false,
     }
-    newSelectionList.push(newSelectionData);
-    setSelectionList(newSelectionList);
-    setShowEditorFor(newSelectionList.length - 1);
+
+    newState.push({
+      selectionData: newSelectionData,
+      editorState: "add",
+    });
+
+    setState(newState);
   }
 
   const handleEditorApplyClick = (newSelection: ActivitySelectionData, index: number) => {
-    // TODO here we can find difference between old and new selection and possibly further up the stack decide that API call isn't needed
-    const newSelectionList = selectionList.map(
-      (selection, mapIndex) => mapIndex === index? { ...newSelection } : selection)
+    const oldSelectionData = state[index].selectionData;
 
-    setSelectionList(newSelectionList);
-    setShowEditorFor(-1);
+    const newState = state.map(
+      (selectionItem, i) => i === index? {
+        selectionData: newSelection,
+        editorState: "view"
+      } : selectionItem
+    );
+
+    props.onSelectionUpdate(oldSelectionData, index);
   }
 
   const handleEditorCancelClick = (index: number) => {
-    setShowEditorFor(-1);
-  }
+    const editorState = state[index].editorState;
 
+    if (editorState=="add") {
+      const newState = state.slice();
+      newState.splice(index, 1);
+      setState(newState);
+    } else {
+      toggleEditor(index, "view");
+    }
+  }
 
   return (
     <div className="activity-selection-widget">
       <h3>Select activities:</h3>
       <ul>
-      {selectionList.map((selection, index) => {
+      {state.map((selectionItem, index) => {
         return (
           <li key={index}>
-            {(index === showEditorFor)
+            {(selectionItem.editorState == "edit" || selectionItem.editorState == "add")
               ? <ActivitySelectionForm
-                selection={selection}
-                onApplyClick={(newSelection) => handleEditorApplyClick(newSelection, index)}
+                selectionData={selectionItem.selectionData}
+                onApplyClick={(newSelectionData) => handleEditorApplyClick(newSelectionData, index)}
                 onCancelClick={() => handleEditorCancelClick(index)}
               />
-              : <div className="activity-selection">
-                Select {selection.maxCount} {(!selection.before) ? "latest" : ""} {(!selection.includePrivate) ? "public" : ""} activities
-                {(selection.after)
-                  ? <> from {selection.after}</>
-                  : ""
-                }
-                {
-                  (selection.before)
-                    ? <> to {selection.before}</>
-                    : ""
-                }
-                {(selection.includePrivate)
-                  ? ", including private activities and private zones."
-                  : ""
-                }
-                <button className="edit-activity-selection" onClick={() => handleEditClick(index)}>Edit</button>
-                <button className="delete-activity-selection" onClick={() => handleDeleteClick(index)}>Delete</button>
+              : <div className="activity-selection-item">
+                  <SelectionDescription selectionData = {selectionItem.selectionData}/>
+                  <button className="edit-activity-selection" onClick={() => handleEditClick(index)}>Edit</button>
+                  <button className="delete-activity-selection" onClick={() => handleDeleteClick(index)}>Delete</button>
               </div>
             }
           </li>
@@ -95,7 +123,7 @@ const ActivitySelectionWidget = (props: ActivitySelectionWidgetProps) => {
 
        })}
       {
-        (selectionList.length < 3 && showEditorFor==-1)
+        (state.length < 3)
           ? <button className="add-activity-selection" onClick={() => handleAddSelectionClick()}>Add</button>
           : ""
       }
@@ -104,5 +132,26 @@ const ActivitySelectionWidget = (props: ActivitySelectionWidgetProps) => {
 
   )
 }
+
+interface SelectionDescriptionProps {
+  selectionData: ActivitySelectionData
+}
+const SelectionDescription = (props: SelectionDescriptionProps) => <>
+  Select {props.selectionData.maxCount} {(!props.selectionData.before) ? "latest" : ""} {(!props.selectionData.includePrivate) ? "public" : ""} activities
+  {(props.selectionData.after)
+    ? <> from {props.selectionData.after}</>
+    : ""
+  }
+  {
+    (props.selectionData.before)
+      ? <> to {props.selectionData.before}</>
+      : ""
+  }
+  {(props.selectionData.includePrivate)
+    ? ", including private activities and private zones."
+    : ""
+  }
+  </>;
+
 
 export default ActivitySelectionWidget

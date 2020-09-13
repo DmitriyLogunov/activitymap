@@ -33,11 +33,10 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
     })();
   }, [selection]);
 
-  const handleSelectionApplyClick = () => {
+  const handleSelectionUpdate = (oldSelectionData: ActivitySelectionData, index: number) => {
+    // TODO here we can find difference between old and new selection data and possibly decide that API call to Strava isn't needed
+    // e.g. instead of 50 activities loading 10
 
-  }
-
-  const handleSelectionUpdate = (index: number) => {
 
   }
 
@@ -52,7 +51,7 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
     <div className="activity-browser">
       <ActivityMap activities={activities} />
       <SidePanel>
-        <ActivitySelectionWidget selectionList={[defaultSelection]} onSelectionUpdate={handleSelectionUpdate}/>
+        <ActivitySelectionWidget selectionDataArray={[defaultSelection]} onSelectionUpdate={handleSelectionUpdate}/>
         <ActivityFilter activities={activities} />
       </SidePanel>
       <BottomPanel>

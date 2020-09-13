@@ -3,13 +3,13 @@ import '../styles/activity_selection_form.css';
 import ActivitySelectionData from "../classes/activity_selection_data";
 
 interface ActivitySelectionFormProps {
-  selection: ActivitySelectionData;
+  selectionData: ActivitySelectionData;
   onApplyClick: (newSelection: ActivitySelectionData) => void;
   onCancelClick: () => void;
 }
 
 const ActivitySelectionForm = (props: ActivitySelectionFormProps) => {
-  const [state, setState] = useState<ActivitySelectionData>(props.selection);
+  const [state, setState] = useState<ActivitySelectionData>(props.selectionData);
 
   const handleCountChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setState({
