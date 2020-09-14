@@ -73,7 +73,7 @@ const EditableArrayWidget = (props: EditableArrayWidgetProps) => {
 //     setState(newState);
 //   }
 //
-//   const handleEditorApplyClick = (newSelection: ActivitySelectionData, index: number) => {
+//   const handleEditorApplyClick = (newSelection: ActivityQuery, index: number) => {
 //     const oldSelectionData = state[index].selectionData;
 //
 //     const newState = state.map(
@@ -135,7 +135,7 @@ const EditableArrayWidget = (props: EditableArrayWidgetProps) => {
 }
 //
 // interface SelectionDescriptionProps {
-//   selectionData: ActivitySelectionData
+//   selectionData: ActivityQuery
 // }
 // const SelectionDescription = (props: SelectionDescriptionProps) => <>
 //   Select {(props.selectionData.maxCount)?props.selectionData.maxCount : ""} {(!props.selectionData.before) ? "latest" : ""} {(!props.selectionData.includePrivate) ? "public" : ""} activities

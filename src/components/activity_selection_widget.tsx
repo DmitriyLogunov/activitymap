@@ -1,19 +1,26 @@
 import React, {useEffect, useState} from "react";
 import '../styles/activity_selection_form.css';
-import ActivitySelectionData from "../classes/activity_selection_data";
-import ActivitySelectionForm from "./activity_selection_form";
+import ActivityQueryEditorForm from "./activity_query_editor_form";
 
-export type SelectionDataArray = Array<ActivitySelectionData>;
+export interface ActivityQuery {
+  after: number | null;
+  before: number | null;
+  maxCount: number;
+  includePrivate: boolean;
+}
+
+export type ActivityQueryArray = Array<ActivityQuery>;
 
 interface ActivitySelectionWidgetProps {
-  selectionDataArray: SelectionDataArray;
-  onSelectionUpdate: (oldSelectionData: ActivitySelectionData, index: number) => void;
+  queries: ActivityQueryArray;
+  newQuery: ActivityQuery;
+  onQueryUpdate: (oldQuery: ActivityQuery, index: number) => void;
 }
 
 type EditorState = "view" | "edit" | "add";
 
 interface SelectionItem {
-  selectionData: ActivitySelectionData,
+  data: ActivityQuery,
   editorState: EditorState,
 }
 
@@ -23,9 +30,9 @@ const ActivitySelectionWidget = (props: ActivitySelectionWidgetProps) => {
   useEffect(() => {
     const initialState = Array<SelectionItem>(0);
 
-    props.selectionDataArray.map((selectionData) => {
+    props.queries.map((query) => {
       initialState.push({
-        selectionData: selectionData,
+        data: query,
         editorState: "view"
       })
     })
@@ -59,7 +66,7 @@ const ActivitySelectionWidget = (props: ActivitySelectionWidgetProps) => {
   const handleAddSelectionClick = () => {
     const newState = state.slice();
 
-    const newSelectionData: ActivitySelectionData = {
+    const newSelectionData: ActivityQuery = {
       maxCount: 1,
       before: null,
       after: null,
@@ -67,15 +74,15 @@ const ActivitySelectionWidget = (props: ActivitySelectionWidgetProps) => {
     }
 
     newState.push({
-      selectionData: newSelectionData,
+      data: newSelectionData,
       editorState: "add",
     });
 
     setState(newState);
   }
 
-  const handleEditorApplyClick = (newSelection: ActivitySelectionData, index: number) => {
-    const oldSelectionData = state[index].selectionData;
+  const handleEditorApplyClick = (newSelection: ActivityQuery, index: number) => {
+    const oldSelectionData = state[index].data;
 
     const newState = state.map(
       (selectionItem, i) => i === index? {
@@ -84,7 +91,7 @@ const ActivitySelectionWidget = (props: ActivitySelectionWidgetProps) => {
       } : selectionItem
     );
 
-    props.onSelectionUpdate(oldSelectionData, index);
+    props.onQueryUpdate(oldSelectionData, index);
   }
 
   const handleEditorCancelClick = (index: number) => {
@@ -107,13 +114,13 @@ const ActivitySelectionWidget = (props: ActivitySelectionWidgetProps) => {
         return (
           <li key={index}>
             {(selectionItem.editorState == "edit" || selectionItem.editorState == "add")
-              ? <ActivitySelectionForm
-                selectionData={selectionItem.selectionData}
+              ? <ActivityQueryEditorForm
+                query={selectionItem.data}
                 onApplyClick={(newSelectionData) => handleEditorApplyClick(newSelectionData, index)}
                 onCancelClick={() => handleEditorCancelClick(index)}
               />
               : <div className="activity-selection-item">
-                  <SelectionDescription selectionData = {selectionItem.selectionData}/>
+                  <SelectionDescription selectionData = {selectionItem.data}/>
                   <button className="edit-activity-selection" onClick={() => handleEditClick(index)}>Edit</button>
                   <button className="delete-activity-selection" onClick={() => handleDeleteClick(index)}>Delete</button>
               </div>
@@ -134,7 +141,7 @@ const ActivitySelectionWidget = (props: ActivitySelectionWidgetProps) => {
 }
 
 interface SelectionDescriptionProps {
-  selectionData: ActivitySelectionData
+  selectionData: ActivityQuery
 }
 const SelectionDescription = (props: SelectionDescriptionProps) => <>
   Select {props.selectionData.maxCount} {(!props.selectionData.before) ? "latest" : ""} {(!props.selectionData.includePrivate) ? "public" : ""} activities

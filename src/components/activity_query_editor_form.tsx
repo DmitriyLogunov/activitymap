@@ -1,15 +1,15 @@
 import React, {useState} from "react";
 import '../styles/activity_selection_form.css';
-import ActivitySelectionData from "../classes/activity_selection_data";
+import {ActivityQuery} from "./activity_selection_widget";
 
-interface ActivitySelectionFormProps {
-  selectionData: ActivitySelectionData;
-  onApplyClick: (newSelection: ActivitySelectionData) => void;
+interface ActivityQueryEditorFormProps {
+  query: ActivityQuery;
+  onApplyClick: (newSelection: ActivityQuery) => void;
   onCancelClick: () => void;
 }
 
-const ActivitySelectionForm = (props: ActivitySelectionFormProps) => {
-  const [state, setState] = useState<ActivitySelectionData>(props.selectionData);
+const ActivityQueryEditorForm = (props: ActivityQueryEditorFormProps) => {
+  const [state, setState] = useState<ActivityQuery>(props.query);
 
   const handleCountChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setState({
@@ -54,4 +54,4 @@ const ActivitySelectionForm = (props: ActivitySelectionFormProps) => {
   </div>);
 }
 
-export default ActivitySelectionForm;
+export default ActivityQueryEditorForm;
