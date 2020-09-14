@@ -4,13 +4,13 @@ import ActivityMap from "./activity_map";
 import StravaAPI from "../classes/strava/strava_api";
 import {SummaryActivity} from "../classes/strava/models";
 import Activities from "../classes/activities";
-import ActivityFilter from "./activity_filter";
 import ActivitySummary from "./activity_summary";
 import SidePanel from "./side_panel";
-import ActivitySelectionForm from "./activity_selection_form";
 import BottomPanel from "./bottom_panel";
 import ActivitySelectionData from "../classes/activity_selection_data";
 import ActivitySelectionWidget from "./activity_selection_widget";
+import ActivityFilterWidget from "./activity_filter_widget";
+import ActivityList from "./activity_list";
 
 interface ActivityBrowserProps {
 }
@@ -35,8 +35,7 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
 
   const handleSelectionUpdate = (oldSelectionData: ActivitySelectionData, index: number) => {
     // TODO here we can find difference between old and new selection data and possibly decide that API call to Strava isn't needed
-    // e.g. instead of 50 activities loading 10
-
+    // e.g. instead of 50 activities, loading 10 with rest of query being same, or reducing date range
 
   }
 
@@ -47,12 +46,18 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
     includePrivate: false,
   }
 
+  // const activityFilterWidget = <ActivityFilterWidget activities={activities} />;
+
+  // const ActivityFilterWidget = withEditableElements(ActivityFilterWidget, ActivityFilterForm);
+
+
   return (
     <div className="activity-browser">
       <ActivityMap activities={activities} />
       <SidePanel>
         <ActivitySelectionWidget selectionDataArray={[defaultSelection]} onSelectionUpdate={handleSelectionUpdate}/>
-        <ActivityFilter activities={activities} />
+        <ActivityFilterWidget activities={activities} />
+        <ActivityList activities={activities} />
       </SidePanel>
       <BottomPanel>
         <ActivitySummary activities={activities} />
