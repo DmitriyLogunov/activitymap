@@ -5,8 +5,9 @@ export interface WithLoadingIndicatorProps {
   hideIndicator: () => void,
 }
 
-export default function withLoadingIndicator<T extends WithLoadingIndicatorProps>(Component: React.ComponentType<T>) {
-  return (props: Omit<T, keyof WithLoadingIndicatorProps>) => {
+export default function withLoadingIndicator<CombinedHocProps extends WithLoadingIndicatorProps>(Component: React.ComponentType<CombinedHocProps>) {
+  type ReturnedComponentProps = Omit<CombinedHocProps, keyof WithLoadingIndicatorProps>;
+  return (props: ReturnedComponentProps) => {
     const [isVisible, setIsVisible] = useState(false);
 
     const showIndicator = () => {
@@ -20,7 +21,7 @@ export default function withLoadingIndicator<T extends WithLoadingIndicatorProps
     return (
     <>
       <div className="component-container">
-        <Component {...props as T} showIndicator={showIndicator} hideIndicator={hideIndicator} />
+        <Component {...props as CombinedHocProps} showIndicator={showIndicator} hideIndicator={hideIndicator} />
       </div>
       {(isVisible)
         ?
