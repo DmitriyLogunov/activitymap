@@ -49,7 +49,7 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
       <ActivityMap activities={activities} />
       <SidePanel>
         <h3>Select activities:</h3>
-        <ActivitySelectionWidget queries={queries} newQueryDefaults={newQuery} onQueryUpdate={handleQueryUpdate}/>
+        <ActivitySelectionWidget data={queries} newItemDefaultValue={newQuery} onQueryUpdate={handleQueryUpdate}/>
         <h3>Apply filters:</h3>
         <ActivityFilterWidget activities={activities} />
         <h3>Activity list:</h3>

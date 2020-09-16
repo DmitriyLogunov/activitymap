@@ -11,8 +11,8 @@ export interface ActivityQuery {
 export type ActivityQueryArray = Array<ActivityQuery>;
 
 interface ActivitySelectionWidgetProps {
-  queries: ActivityQueryArray;
-  newQueryDefaults: ActivityQuery;
+  data: ActivityQueryArray;
+  newItemDefaultValue: ActivityQuery;
   onQueryUpdate: (oldQuery: ActivityQuery, index: number) => void;
 }
 
@@ -82,9 +82,7 @@ const ActivitySelectionWidget = (props: ActivitySelectionWidgetProps) => {
   };
 
   const multipleSelectionWidgetProps: MultipleSelectionWidgetProps<ActivityQuery> = {
-    initialData: props.queries,
-    newItemDefaultValues: props.newQueryDefaults,
-    onQueryUpdate: props.onQueryUpdate,
+    ...props,
 
     ItemRenderer: ItemRenderer,
     ItemEditor: ItemEditor,

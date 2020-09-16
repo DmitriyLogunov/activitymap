@@ -19,21 +19,13 @@ export interface SelectionEditorProps<T> {
 }
 
 export interface MultipleSelectionWidgetProps<T> {
-  initialData: DataArray<T>;
-  newItemDefaultValues: T;
+  data: DataArray<T>;
+  newItemDefaultValue: T;
 
   onQueryUpdate: (oldQuery: T, index: number) => void;
 
   ItemRenderer: React.ComponentType<T>;
   ItemEditor: React.ComponentType<SelectionEditorProps<T>>
-}
-
-class A<T> extends React.Component<MultipleSelectionWidgetProps<T>, {}> {
-
-}
-
-function B<T>(props: MultipleSelectionWidgetProps<T>) {
-  return <div></div>;
 }
 
 function MultipleSelectionWidget<T>(props: MultipleSelectionWidgetProps<T>) {
@@ -42,7 +34,7 @@ function MultipleSelectionWidget<T>(props: MultipleSelectionWidgetProps<T>) {
   useEffect(() => {
     const initialState = Array<SelectionItem<T>>(0);
 
-    props.initialData.map((dataItem) => {
+    props.data.map((dataItem) => {
       initialState.push({
         data: dataItem,
         editorState: "view"
@@ -79,7 +71,7 @@ function MultipleSelectionWidget<T>(props: MultipleSelectionWidgetProps<T>) {
     const newState = state.slice();
 
     newState.push({
-      data: props.newItemDefaultValues,
+      data: props.newItemDefaultValue,
       editorState: "add",
     });
 
