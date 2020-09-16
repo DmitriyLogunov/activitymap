@@ -31,8 +31,9 @@ const AuthorisationCallbackHandler = (props: AuthStoreProps) => {
     localStorage.setItem('authenticationData', JSON.stringify(authenticationData));
 
     setTimeout(() => {
-      history.push(mainAppRoute);
-    }, 1000);
+      //history.push(mainAppRoute);
+      window.location.href = mainAppRoute;
+    }, 500);
   }
 
   let getParameters = queryString.parse(props.location.search);
