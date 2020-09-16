@@ -7,8 +7,9 @@ interface ActivityListProps extends WithLoadingIndicatorProps {
 }
 
 const ActivityList = withLoadingIndicator((props: ActivityListProps) => {
+  props.showIndicator();
+
   return (<div className="activity-list">
-    <h3>Activity list:</h3>
     <ul>
       {props.activities.get().map(activity => {return (
         <li key={activity.summaryActivity.id}>{activity.summaryActivity.name}</li>

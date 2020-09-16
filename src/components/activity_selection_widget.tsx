@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from "react";
-import '../styles/activity_selection_form.css';
-import ActivityQueryEditorForm from "./activity_query_editor_form";
+import React, {useState} from "react";
+import MultipleSelectionWidget, {MultipleSelectionWidgetProps, SelectionEditorProps} from "./multiple_selection_widget";
 
 export interface ActivityQuery {
   after: number | null;
@@ -13,152 +12,89 @@ export type ActivityQueryArray = Array<ActivityQuery>;
 
 interface ActivitySelectionWidgetProps {
   queries: ActivityQueryArray;
-  newQuery: ActivityQuery;
+  newQueryDefaults: ActivityQuery;
   onQueryUpdate: (oldQuery: ActivityQuery, index: number) => void;
 }
 
-type EditorState = "view" | "edit" | "add";
-
-interface SelectionItem {
-  data: ActivityQuery,
-  editorState: EditorState,
-}
-
 const ActivitySelectionWidget = (props: ActivitySelectionWidgetProps) => {
-  const [state, setState] = useState<Array<SelectionItem>>(Array<SelectionItem>(0));
+  const ItemRenderer = (props: ActivityQuery) => (<>
+    Select {props.maxCount} {(!props.before) ? "latest" : ""} {(!props.includePrivate) ? "public" : ""} activities
+    {(props.after)
+      ? <> from {props.after}</>
+      : ""
+    }
+    {
+      (props.before)
+        ? <> to {props.before}</>
+        : ""
+    }
+    {(props.includePrivate)
+      ? ", including private activities and private zones."
+      : ""
+    }
+  </>);
 
-  useEffect(() => {
-    const initialState = Array<SelectionItem>(0);
+  const ItemEditor = (props: SelectionEditorProps<ActivityQuery>) => {
+    const [state, setState] = useState<ActivityQuery>(props.data);
 
-    props.queries.map((query) => {
-      initialState.push({
-        data: query,
-        editorState: "view"
-      })
-    })
-
-    setState(initialState);
-  }, []);
-
-  const toggleEditor = (index: number, newEditorState: EditorState) => {
-    const newState = state.slice();
-
-    newState[index] = {
-      ...newState[index],
-      editorState: newEditorState,
-    };
-
-    setState(newState);
-  }
-
-  const handleEditClick = (index: number) => {
-    toggleEditor(index, "edit");
-  }
-
-  const handleDeleteClick = (index: number) => {
-    const newState = state.slice();
-    // TODO save this object and provide undo option for a few seconds after deletion
-    const deletedSelection = newState.splice(index, 1);
-
-    setState(newState);
-  }
-
-  const handleAddSelectionClick = () => {
-    const newState = state.slice();
-
-    const newSelectionData: ActivityQuery = {
-      maxCount: 1,
-      before: null,
-      after: null,
-      includePrivate: false,
+    const handleCountChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+      setState({
+        ...state,
+        maxCount: parseInt(event.target.value)
+      });
     }
 
-    newState.push({
-      data: newSelectionData,
-      editorState: "add",
-    });
+    return (<div className="activity-selector">
+        <form>
+          <label>
+            Activity range:
+          </label>
+          <br/>
 
-    setState(newState);
-  }
+          <label>
+            Max activities:
+            <input
+              type="range"
+              name="count"
+              min={1}
+              max={100}
+              value={state.maxCount}
+              onChange={handleCountChange}
+            />
+            {state.maxCount}
+          </label>
 
-  const handleEditorApplyClick = (newSelection: ActivityQuery, index: number) => {
-    const oldSelectionData = state[index].data;
+          <br/>
 
-    const newState = state.map(
-      (selectionItem, i) => i === index? {
-        selectionData: newSelection,
-        editorState: "view"
-      } : selectionItem
-    );
+          <label>Date range: {}</label>
 
-    props.onQueryUpdate(oldSelectionData, index);
-  }
+          <br/>
 
-  const handleEditorCancelClick = (index: number) => {
-    const editorState = state[index].editorState;
+          <label>Include private activities</label>
 
-    if (editorState=="add") {
-      const newState = state.slice();
-      newState.splice(index, 1);
-      setState(newState);
-    } else {
-      toggleEditor(index, "view");
-    }
+          <br/>
+
+          <button onClick={() => props.onApplyClick(state)}>Apply</button>
+          <button onClick={() => props.onCancelClick()}>Cancel</button>
+        </form>
+      </div>
+    )
+  };
+
+  const multipleSelectionWidgetProps: MultipleSelectionWidgetProps<ActivityQuery> = {
+    initialData: props.queries,
+    newItemDefaultValues: props.newQueryDefaults,
+    onQueryUpdate: props.onQueryUpdate,
+
+    ItemRenderer: ItemRenderer,
+    ItemEditor: ItemEditor,
   }
 
   return (
-    <div className="activity-selection-widget">
-      <h3>Select activities:</h3>
-      <ul>
-      {state.map((selectionItem, index) => {
-        return (
-          <li key={index}>
-            {(selectionItem.editorState == "edit" || selectionItem.editorState == "add")
-              ? <ActivityQueryEditorForm
-                query={selectionItem.data}
-                onApplyClick={(newSelectionData) => handleEditorApplyClick(newSelectionData, index)}
-                onCancelClick={() => handleEditorCancelClick(index)}
-              />
-              : <div className="activity-selection-item">
-                  <SelectionDescription selectionData = {selectionItem.data}/>
-                  <button className="edit-activity-selection" onClick={() => handleEditClick(index)}>Edit</button>
-                  <button className="delete-activity-selection" onClick={() => handleDeleteClick(index)}>Delete</button>
-              </div>
-            }
-          </li>
-        )
-
-       })}
-      {
-        (state.length < 3)
-          ? <button className="add-activity-selection" onClick={() => handleAddSelectionClick()}>Add</button>
-          : ""
-      }
-      </ul>
-    </div>
-
+    <MultipleSelectionWidget
+      {...multipleSelectionWidgetProps}
+    />
   )
 }
 
-interface SelectionDescriptionProps {
-  selectionData: ActivityQuery
-}
-const SelectionDescription = (props: SelectionDescriptionProps) => <>
-  Select {props.selectionData.maxCount} {(!props.selectionData.before) ? "latest" : ""} {(!props.selectionData.includePrivate) ? "public" : ""} activities
-  {(props.selectionData.after)
-    ? <> from {props.selectionData.after}</>
-    : ""
-  }
-  {
-    (props.selectionData.before)
-      ? <> to {props.selectionData.before}</>
-      : ""
-  }
-  {(props.selectionData.includePrivate)
-    ? ", including private activities and private zones."
-    : ""
-  }
-  </>;
-
-
-export default ActivitySelectionWidget
+export default ActivitySelectionWidget;

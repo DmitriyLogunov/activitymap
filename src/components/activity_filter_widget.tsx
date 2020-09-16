@@ -1,15 +1,12 @@
 import React from "react";
 import Activities from "../classes/activities";
-import withEditableElements, {WithEditableElementsProps} from "./with_editable_elements";
 
-interface ActivityFilterWidgetProps extends WithEditableElementsProps {
+interface ActivityFilterWidgetProps {
   activities: Activities;
 }
 
-const ActivityFilterWidget = withEditableElements((props: ActivityFilterWidgetProps) => {
+const ActivityFilterWidget = (props: ActivityFilterWidgetProps) => {
   return (<div className="activity-filter">
-    <h3>Apply filters:</h3>
-
     {/*<EditableArray>*/}
     {/*  <View>*/}
 
@@ -19,6 +16,6 @@ const ActivityFilterWidget = withEditableElements((props: ActivityFilterWidgetPr
     {/*  </Editor>*/}
     {/*</EditableArray>*/}
   </div>);
-});
+};
 
 export default ActivityFilterWidget;

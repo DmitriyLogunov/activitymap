@@ -7,9 +7,9 @@ import Activities from "../classes/activities";
 import ActivitySummary from "./activity_summary";
 import SidePanel from "./side_panel";
 import BottomPanel from "./bottom_panel";
-import ActivitySelectionWidget, {ActivityQuery, ActivityQueryArray} from "./activity_selection_widget";
 import ActivityFilterWidget from "./activity_filter_widget";
 import ActivityList from "./activity_list";
+import ActivitySelectionWidget, {ActivityQuery, ActivityQueryArray} from "./activity_selection_widget";
 
 interface ActivityBrowserProps {
 }
@@ -41,21 +41,18 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
     // e.g. instead of 50 activities, loading 10 with rest of query being same, or reducing date range
     // check what state update lifecycle method can be used for this
 
-
     // setQueries()
   }
-
-  // const activityFilterWidget = <ActivityFilterWidget activities={activities} />;
-
-  // const ActivityFilterWidget = withEditableElements(ActivityFilterWidget, ActivityFilterForm);
-
 
   return (
     <div className="activity-browser">
       <ActivityMap activities={activities} />
       <SidePanel>
-        <ActivitySelectionWidget queries={queries} newQuery={newQuery} onQueryUpdate={handleQueryUpdate}/>
+        <h3>Select activities:</h3>
+        <ActivitySelectionWidget queries={queries} newQueryDefaults={newQuery} onQueryUpdate={handleQueryUpdate}/>
+        <h3>Apply filters:</h3>
         <ActivityFilterWidget activities={activities} />
+        <h3>Activity list:</h3>
         <ActivityList activities={activities} />
       </SidePanel>
       <BottomPanel>
