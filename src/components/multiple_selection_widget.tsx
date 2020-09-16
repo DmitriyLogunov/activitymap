@@ -1,7 +1,5 @@
 import React, {useEffect, useState} from "react";
 import '../styles/activity_selection_form.css';
-import ActivityQueryEditorForm from "./activity_query_editor_form";
-import {ActivityQuery} from "./activity_selection_widget";
 
 export type DataArray<T> = Array<T>;
 
