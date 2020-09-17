@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from "react";
 import '../styles/activity_selection_form.css';
 
-export type DataArray<T> = Array<T>;
+export interface MultipleSelectionInjectedProps<T> {
+  ItemRenderer: React.ComponentType<T>;
+  ItemEditor: React.ComponentType<SelectionEditorProps<T>>;
+}
 
-type EditorState = "view" | "edit" | "add";
-
-interface SelectionItem<T> {
-  data: T,
-  editorState: EditorState,
+export interface MultipleSelectionRequiredProps<T> {
+  data: Array<T>;
+  newItemDefaultValue: T;
+  onQueryUpdate: (oldQuery: T, index: number) => void;
 }
 
 export interface SelectionEditorProps<T> {
@@ -16,17 +18,17 @@ export interface SelectionEditorProps<T> {
   onCancelClick: () => void;
 }
 
-export interface MultipleSelectionWidgetProps<T> {
-  data: DataArray<T>;
-  newItemDefaultValue: T;
-
-  onQueryUpdate: (oldQuery: T, index: number) => void;
-
-  ItemRenderer: React.ComponentType<T>;
-  ItemEditor: React.ComponentType<SelectionEditorProps<T>>
+export interface MultipleSelectionCombinedProps<T> extends MultipleSelectionRequiredProps<T>, MultipleSelectionInjectedProps<T> {
 }
 
-function MultipleSelectionWidget<T>(props: MultipleSelectionWidgetProps<T>) {
+interface SelectionItem<T> {
+  data: T,
+  editorState: EditorState,
+}
+
+type EditorState = "view" | "edit" | "add";
+
+function MultipleSelectionWidget<T>(props: MultipleSelectionCombinedProps<T>) {
   const [state, setState] = useState<Array<SelectionItem<T>>>(Array<SelectionItem<T>>(0));
 
   useEffect(() => {

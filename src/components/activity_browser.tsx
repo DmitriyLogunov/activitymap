@@ -9,7 +9,8 @@ import SidePanel from "./side_panel";
 import BottomPanel from "./bottom_panel";
 import ActivityFilterWidget from "./activity_filter_widget";
 import ActivityList from "./activity_list";
-import ActivitySelectionWidget, {ActivityQuery, ActivityQueryArray} from "./activity_selection_widget";
+import {ActivityQuery} from "./with_activity_queries";
+import ActivityQueriesWidget from "./activity_queries_widget";
 
 interface ActivityBrowserProps {
 }
@@ -24,7 +25,7 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
     includePrivate: false,
   }
 
-  const [queries, setQueries] = useState<ActivityQueryArray>([newQuery]);
+  const [queries, setQueries] = useState<Array<ActivityQuery>>([newQuery]);
 
   useEffect(() => {
     // TODO query from queries array
@@ -49,7 +50,7 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
       <ActivityMap activities={activities} />
       <SidePanel>
         <h3>Select activities:</h3>
-        <ActivitySelectionWidget data={queries} newItemDefaultValue={newQuery} onQueryUpdate={handleQueryUpdate}/>
+        <ActivityQueriesWidget data={queries} newItemDefaultValue={newQuery} onQueryUpdate={handleQueryUpdate}/>
         <h3>Apply filters:</h3>
         <ActivityFilterWidget activities={activities} />
         <h3>Activity list:</h3>
