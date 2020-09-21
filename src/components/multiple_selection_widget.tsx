@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import '../styles/activity_selection_form.css';
 
 export interface MultipleSelectionInjectedProps<T> {
   ItemRenderer: React.ComponentType<T>;
@@ -9,11 +8,15 @@ export interface MultipleSelectionInjectedProps<T> {
 export interface MultipleSelectionRequiredProps<T> {
   data: Array<T>;
   newItemDefaultValue: T;
-  onQueryUpdate: (oldQuery: T, index: number) => void;
+  onItemUpdate: (oldQuery: T, index: number) => void;
+}
+
+export interface SelectionRendererProps<T> {
+  itemBeingRendered: T,
 }
 
 export interface SelectionEditorProps<T> {
-  data: T,
+  itemBeingEdited: T,
   onApplyClick: (newSelection: T) => void;
   onCancelClick: () => void;
 }
@@ -88,7 +91,7 @@ function MultipleSelectionWidget<T>(props: MultipleSelectionCombinedProps<T>) {
       } : selectionItem
     );
 
-    props.onQueryUpdate(oldSelectionData, index);
+    props.onItemUpdate(oldSelectionData, index);
   }
 
   const handleEditorCancelClick = (index: number) => {
@@ -114,7 +117,7 @@ function MultipleSelectionWidget<T>(props: MultipleSelectionCombinedProps<T>) {
             <li key={index}>
               {(selectionItem.editorState == "edit" || selectionItem.editorState == "add")
                 ? <ItemEditor
-                  data={selectionItem.data}
+                  itemBeingEdited={selectionItem.data}
                   onApplyClick={(newSelectionData) => handleEditorApplyClick(newSelectionData, index)}
                   onCancelClick={() => handleEditorCancelClick(index)}
                 />

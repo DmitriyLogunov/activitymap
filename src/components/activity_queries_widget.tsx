@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import MultipleSelectionWidget, { MultipleSelectionCombinedProps } from "./multiple_selection_widget";
-import withActivityQueries, {ActivityQuery, WithActivityQueriesProps} from "./with_activity_queries";
+import {ActivityQuery} from "../models/ActivityQuery";
+import withActivityQueries from "./withActivityQueries";
 
 interface ActivityQueriesWidgetProps extends MultipleSelectionCombinedProps<ActivityQuery> {
 };

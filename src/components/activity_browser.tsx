@@ -7,10 +7,14 @@ import Activities from "../classes/activities";
 import ActivitySummary from "./activity_summary";
 import SidePanel from "./side_panel";
 import BottomPanel from "./bottom_panel";
-import ActivityFilterWidget from "./activity_filter_widget";
 import ActivityList from "./activity_list";
-import {ActivityQuery} from "./with_activity_queries";
 import ActivityQueriesWidget from "./activity_queries_widget";
+import withActivityFilters from "./withActivityFilters";
+import ActivityFilter from "../models/ActivityFilter";
+import {ActivityQuery} from "../models/ActivityQuery";
+import ActivityFilterEditor from "./ActivityFilterEditor";
+import ActivityFilterRenderer from "./ActivityFilterRenderer";
+import MultipleSelectionWidget, {MultipleSelectionCombinedProps} from "./multiple_selection_widget";
 
 interface ActivityBrowserProps {
 }
@@ -45,14 +49,20 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
     // setQueries()
   }
 
+  type ActivityFiltersWidgetProps = MultipleSelectionCombinedProps<ActivityFilter>;
+  const ActivityFiltersWidget = withActivityFilters<ActivityFiltersWidgetProps, ActivityFilter>(MultipleSelectionWidget, ActivityFilterRenderer, ActivityFilterEditor);
+
+  const handleActivityFilterUpdate = (item: ActivityFilter, index: number) => {
+  }
+
   return (
     <div className="activity-browser">
       <ActivityMap activities={activities} />
       <SidePanel>
         <h3>Select activities:</h3>
-        <ActivityQueriesWidget data={queries} newItemDefaultValue={newQuery} onQueryUpdate={handleQueryUpdate}/>
+        <ActivityQueriesWidget data={queries} newItemDefaultValue={newQuery} onItemUpdate={handleQueryUpdate}/>
         <h3>Apply filters:</h3>
-        <ActivityFilterWidget activities={activities} />
+        <ActivityFiltersWidget data={new Array<ActivityFilter>()} newItemDefaultValue={new ActivityFilter({filterType: "keyWord", filterRule: "foo"})} onItemUpdate={handleActivityFilterUpdate}/>
         <h3>Activity list:</h3>
         <ActivityList activities={activities} />
       </SidePanel>
