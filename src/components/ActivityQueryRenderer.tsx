@@ -1,21 +1,27 @@
 import React from "react";
 import {ActivityQuery} from "../models/ActivityQuery";
+import {RendererProps} from "./multiple_selection_widget";
 
-const ActivityQueryRenderer = (props: ActivityQuery) => (<>
-  Select {props.maxCount} {(!props.before) ? "latest" : ""} {(!props.includePrivate) ? "public" : ""} activities
-  {(props.after)
-    ? <> from {props.after}</>
-    : ""
-  }
-  {
-    (props.before)
-      ? <> to {props.before}</>
+interface ActivityQueryRendererProps extends RendererProps<ActivityQuery> {}
+
+const ActivityQueryRenderer = (props: ActivityQueryRendererProps) => {
+  const item = props.itemBeingRendered;
+  return (<>
+    Select {item.maxCount} {(!item.before) ? "latest" : ""} {(!item.includePrivate) ? "public" : ""} activities
+    {(item.after)
+      ? <> from {item.after}</>
       : ""
-  }
-  {(props.includePrivate)
-    ? ", including private activities and private zones."
-    : ""
-  }
-</>);
+    }
+    {
+      (item.before)
+        ? <> to {item.before}</>
+        : ""
+    }
+    {(item.includePrivate)
+      ? ", including private activities and private zones."
+      : ""
+    }
+  </>)
+};
 
 export default ActivityQueryRenderer;

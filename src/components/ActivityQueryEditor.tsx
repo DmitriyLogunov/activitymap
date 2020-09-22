@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {ActivityQuery} from "../models/ActivityQuery";
-import {SelectionEditorProps} from "./multiple_selection_widget";
+import {EditorProps} from "./multiple_selection_widget";
 
-const ActivityqueryEditor = (props: SelectionEditorProps<ActivityQuery>) => {
+const ActivityqueryEditor = (props: EditorProps<ActivityQuery>) => {
   const [state, setState] = useState<ActivityQuery>(props.itemBeingEdited);
 
   const handleCountChange = (event: React.ChangeEvent<HTMLInputElement>): void => {

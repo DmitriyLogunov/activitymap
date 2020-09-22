@@ -1,27 +1,17 @@
 import {
-  MultipleSelectionInjectedProps,
-  SelectionEditorProps,
-  SelectionRendererProps
+  MultipleSelectionCombinedProps,
+  EditorProps,
+  RendererProps,
+  withCustomItems
 } from "./multiple_selection_widget";
 import React from "react";
 import ActivityFilter from "../models/ActivityFilter";
+import ActivityFilterRenderer from "./ActivityFilterRenderer";
+import ActivityFilterEditor from "./ActivityFilterEditor";
 
-export interface WithActivityFiltersProps extends MultipleSelectionInjectedProps<ActivityFilter> {}
-
-export default function withActivityFilters<CombinedHOCProps extends WithActivityFiltersProps, T>(
-  Component: React.ComponentType<CombinedHOCProps>,
-  Renderer: React.ComponentType<SelectionRendererProps<T>>,
-  Editor: React.ComponentType<SelectionEditorProps<T>>,
+export default function withActivityFilters(
+  Component: React.ComponentType<MultipleSelectionCombinedProps<ActivityFilter>>
 ) {
-  type ReturnedComponentProps = Omit<CombinedHOCProps, keyof WithActivityFiltersProps>;
-  return (props: ReturnedComponentProps) => {
-    return (
-      <Component
-        {...props as CombinedHOCProps}
-
-        ItemRenderer={Renderer}
-        ItemEditor={Editor}
-      />
-    )
-  };
+  return withCustomItems<ActivityFilter, MultipleSelectionCombinedProps<ActivityFilter>>(Component, ActivityFilterRenderer, ActivityFilterEditor);
 }
+

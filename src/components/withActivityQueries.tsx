@@ -1,22 +1,17 @@
-import React, {useState} from "react";
-import {MultipleSelectionInjectedProps} from "./multiple_selection_widget";
+import React from "react";
+import {
+  MultipleSelectionCombinedProps,
+  MultipleSelectionCustomRendererProps,
+  withCustomItems
+} from "./multiple_selection_widget";
 import {ActivityQuery} from "../models/ActivityQuery";
 import ActivityQueryRenderer from "./ActivityQueryRenderer";
 import ActivityQueryEditor from "./ActivityQueryEditor";
 
-export interface WithActivityQueriesProps extends MultipleSelectionInjectedProps<ActivityQuery> {}
+export interface WithActivityQueriesProps extends MultipleSelectionCustomRendererProps<ActivityQuery> {}
 
-export default function withActivityQueries<CombinedHOCProps extends WithActivityQueriesProps>(Component: React.ComponentType<CombinedHOCProps>) {
-  type ReturnedComponentProps = Omit<CombinedHOCProps, keyof WithActivityQueriesProps>;
-  return (props: ReturnedComponentProps) => {
-    return (
-      <Component
-        {...props as CombinedHOCProps}
-
-        ItemRenderer={ActivityQueryRenderer}
-        ItemEditor={ActivityQueryEditor}
-      />
-    )
-  };
+export default function withActivityQueries(
+  Component: React.ComponentType<MultipleSelectionCombinedProps<ActivityQuery>>
+) {
+  return withCustomItems<ActivityQuery, MultipleSelectionCombinedProps<ActivityQuery>>(Component, ActivityQueryRenderer, ActivityQueryEditor);
 }
-

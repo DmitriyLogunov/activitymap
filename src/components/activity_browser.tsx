@@ -15,6 +15,7 @@ import {ActivityQuery} from "../models/ActivityQuery";
 import ActivityFilterEditor from "./ActivityFilterEditor";
 import ActivityFilterRenderer from "./ActivityFilterRenderer";
 import MultipleSelectionWidget, {MultipleSelectionCombinedProps} from "./multiple_selection_widget";
+import withActivityQueries from "./withActivityQueries";
 
 interface ActivityBrowserProps {
 }
@@ -42,15 +43,15 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
   }, [queries]);
 
   const handleQueryUpdate = (oldQueryData: ActivityQuery, index: number) => {
-    // TODO find difference between old and new selection data and possibly decide that API call to Strava isn't needed
+    // TODO find difference between old and new selection itemArray and possibly decide that API call to Strava isn't needed
     // e.g. instead of 50 activities, loading 10 with rest of query being same, or reducing date range
     // check what state update lifecycle method can be used for this
 
     // setQueries()
   }
 
-  type ActivityFiltersWidgetProps = MultipleSelectionCombinedProps<ActivityFilter>;
-  const ActivityFiltersWidget = withActivityFilters<ActivityFiltersWidgetProps, ActivityFilter>(MultipleSelectionWidget, ActivityFilterRenderer, ActivityFilterEditor);
+  const ActivityQueriesWidget = withActivityQueries(MultipleSelectionWidget);
+  const ActivityFiltersWidget = withActivityFilters(MultipleSelectionWidget);
 
   const handleActivityFilterUpdate = (item: ActivityFilter, index: number) => {
   }
@@ -60,9 +61,9 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
       <ActivityMap activities={activities} />
       <SidePanel>
         <h3>Select activities:</h3>
-        <ActivityQueriesWidget data={queries} newItemDefaultValue={newQuery} onItemUpdate={handleQueryUpdate}/>
+        <ActivityQueriesWidget itemArray={queries} newItemDefaults={newQuery} onItemUpdate={handleQueryUpdate}/>
         <h3>Apply filters:</h3>
-        <ActivityFiltersWidget data={new Array<ActivityFilter>()} newItemDefaultValue={new ActivityFilter({filterType: "keyWord", filterRule: "foo"})} onItemUpdate={handleActivityFilterUpdate}/>
+        <ActivityFiltersWidget itemArray={new Array<ActivityFilter>()} newItemDefaults={new ActivityFilter({filterType: "keyWord", filterRule: "foo"})} onItemUpdate={handleActivityFilterUpdate}/>
         <h3>Activity list:</h3>
         <ActivityList activities={activities} />
       </SidePanel>

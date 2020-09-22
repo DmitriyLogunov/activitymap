@@ -1,27 +1,27 @@
 import React, {useEffect, useState} from "react";
 
-export interface MultipleSelectionInjectedProps<T> {
-  ItemRenderer: React.ComponentType<T>;
-  ItemEditor: React.ComponentType<SelectionEditorProps<T>>;
+export interface MultipleSelectionCustomRendererProps<T> {
+  ItemRenderer: React.ComponentType<RendererProps<T>>;
+  ItemEditor: React.ComponentType<EditorProps<T>>;
 }
 
-export interface MultipleSelectionRequiredProps<T> {
-  data: Array<T>;
-  newItemDefaultValue: T;
-  onItemUpdate: (oldQuery: T, index: number) => void;
+export interface MultipleSelectionBaseProps<T> {
+  itemArray: Array<T>;
+  newItemDefaults: T;
+  onItemUpdate?: (oldItemValue: T, index: number) => void;
 }
 
-export interface SelectionRendererProps<T> {
+export interface RendererProps<T> {
   itemBeingRendered: T,
 }
 
-export interface SelectionEditorProps<T> {
+export interface EditorProps<T> {
   itemBeingEdited: T,
   onApplyClick: (newSelection: T) => void;
   onCancelClick: () => void;
 }
 
-export interface MultipleSelectionCombinedProps<T> extends MultipleSelectionRequiredProps<T>, MultipleSelectionInjectedProps<T> {
+export interface MultipleSelectionCombinedProps<T> extends MultipleSelectionBaseProps<T>, MultipleSelectionCustomRendererProps<T> {
 }
 
 interface SelectionItem<T> {
@@ -37,7 +37,7 @@ function MultipleSelectionWidget<T>(props: MultipleSelectionCombinedProps<T>) {
   useEffect(() => {
     const initialState = Array<SelectionItem<T>>(0);
 
-    props.data.map((dataItem) => {
+    props.itemArray.map((dataItem) => {
       initialState.push({
         data: dataItem,
         editorState: "view"
@@ -74,7 +74,7 @@ function MultipleSelectionWidget<T>(props: MultipleSelectionCombinedProps<T>) {
     const newState = state.slice();
 
     newState.push({
-      data: props.newItemDefaultValue,
+      data: props.newItemDefaults,
       editorState: "add",
     });
 
@@ -91,7 +91,9 @@ function MultipleSelectionWidget<T>(props: MultipleSelectionCombinedProps<T>) {
       } : selectionItem
     );
 
-    props.onItemUpdate(oldSelectionData, index);
+    if (props.onItemUpdate) {
+      props.onItemUpdate(oldSelectionData, index);
+    }
   }
 
   const handleEditorCancelClick = (index: number) => {
@@ -122,7 +124,9 @@ function MultipleSelectionWidget<T>(props: MultipleSelectionCombinedProps<T>) {
                   onCancelClick={() => handleEditorCancelClick(index)}
                 />
                 : <div className="activity-selection-item">
-                  <ItemRenderer {...selectionItem.data} />
+                  <ItemRenderer
+                    itemBeingRendered = {selectionItem.data}
+                  />
                   <button className="edit-activity-selection" onClick={() => handleEditClick(index)}>Edit</button>
                   <button className="delete-activity-selection" onClick={() => handleDeleteClick(index)}>Delete</button>
                 </div>
@@ -138,8 +142,25 @@ function MultipleSelectionWidget<T>(props: MultipleSelectionCombinedProps<T>) {
         }
       </ul>
     </div>
-
   )
+}
+
+export function withCustomItems<T, CombinedHOCProps extends MultipleSelectionCustomRendererProps<T>, >(
+  Component: React.ComponentType<CombinedHOCProps>,
+  Renderer: React.ComponentType<RendererProps<T>>,
+  Editor: React.ComponentType<EditorProps<T>>,
+) {
+  type ReturnedComponentProps = Omit<CombinedHOCProps, keyof MultipleSelectionCustomRendererProps<T>>;
+  return (props: ReturnedComponentProps) => {
+    return (
+      <Component
+        {...props as CombinedHOCProps}
+
+        ItemRenderer={Renderer}
+        ItemEditor={Editor}
+      />
+    )
+  };
 }
 
 export default MultipleSelectionWidget

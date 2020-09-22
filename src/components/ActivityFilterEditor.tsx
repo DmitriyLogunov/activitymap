@@ -1,4 +1,4 @@
-import {SelectionEditorProps} from "./multiple_selection_widget";
+import {EditorProps} from "./multiple_selection_widget";
 import React, {useState} from "react";
 import ActivityFilter from "../models/ActivityFilter";
 
@@ -6,7 +6,7 @@ interface ActivityFilterEditorState {
   filter: ActivityFilter,
 }
 
-interface ActivityFilterEditorProps extends SelectionEditorProps<ActivityFilter> {}
+interface ActivityFilterEditorProps extends EditorProps<ActivityFilter> {}
 
 const ActivityFilterEditor = (props: ActivityFilterEditorProps) => {
   const [state, setState] = useState<ActivityFilterEditorState>({
