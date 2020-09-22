@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import {ActivityQuery} from "../models/ActivityQuery";
-import {EditorProps} from "./multiple_selection_widget";
+import ActivityQuery from "../models/ActivityQuery";
+import {EditorProps} from "./MultipleSelectionWidget";
 
 const ActivityqueryEditor = (props: EditorProps<ActivityQuery>) => {
   const [state, setState] = useState<ActivityQuery>(props.itemBeingEdited);

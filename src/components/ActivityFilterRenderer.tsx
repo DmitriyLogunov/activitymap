@@ -1,6 +1,6 @@
 import React from "react";
 import ActivityFilter from "../models/ActivityFilter";
-import {RendererProps} from "./multiple_selection_widget";
+import {RendererProps} from "./MultipleSelectionWidget";
 
 interface ActivityFilterRendererProps extends RendererProps<ActivityFilter> {}
 

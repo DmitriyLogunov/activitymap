@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import '../styles/activity_map.css';
+import '../styles/ActivityMap.css';
 import {Map, Marker, Polyline, Popup, TileLayer} from 'react-leaflet';
 import L, {LatLng} from 'leaflet';
 import polyUtil from 'polyline-encoded';
-import Activities from "../classes/activities";
+import {Activities} from "../models/Activity";
 
 interface ActivityMapProps {
   activities: Activities;

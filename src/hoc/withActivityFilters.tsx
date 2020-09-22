@@ -1,13 +1,9 @@
-import {
-  MultipleSelectionCombinedProps,
-  EditorProps,
-  RendererProps,
-  withCustomItems
-} from "./multiple_selection_widget";
+import {MultipleSelectionCombinedProps} from "../components/MultipleSelectionWidget";
 import React from "react";
 import ActivityFilter from "../models/ActivityFilter";
-import ActivityFilterRenderer from "./ActivityFilterRenderer";
-import ActivityFilterEditor from "./ActivityFilterEditor";
+import ActivityFilterRenderer from "../components/ActivityFilterRenderer";
+import ActivityFilterEditor from "../components/ActivityFilterEditor";
+import withCustomItems from "./withCustomItems";
 
 export default function withActivityFilters(
   Component: React.ComponentType<MultipleSelectionCombinedProps<ActivityFilter>>

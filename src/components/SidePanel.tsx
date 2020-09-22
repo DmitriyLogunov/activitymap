@@ -1,5 +1,5 @@
 import React from "react";
-import '../styles/side_panel.css';
+import '../styles/SidePanel.css';
 
 interface SidePanelProps {
   initiallyClosed?: boolean;

@@ -1,46 +1,53 @@
 import React, {useEffect, useState} from "react";
-import '../styles/activity_browser.css';
-import ActivityMap from "./activity_map";
-import StravaAPI from "../classes/strava/strava_api";
+import '../styles/ActivityBrowser.css';
+import ActivityMap from "./ActivityMap";
+import StravaAPI from "../classes/strava/StravaAPI";
 import {SummaryActivity} from "../classes/strava/models";
-import Activities from "../classes/activities";
-import ActivitySummary from "./activity_summary";
-import SidePanel from "./side_panel";
-import BottomPanel from "./bottom_panel";
-import ActivityList from "./activity_list";
-import ActivityQueriesWidget from "./activity_queries_widget";
-import withActivityFilters from "./withActivityFilters";
+import ActivitySummary from "./ActivitySummary";
+import SidePanel from "./SidePanel";
+import BottomPanel from "./BottomPanel";
+import ActivityList from "./ActivityList";
+import withActivityFilters from "../hoc/withActivityFilters";
 import ActivityFilter from "../models/ActivityFilter";
-import {ActivityQuery} from "../models/ActivityQuery";
-import ActivityFilterEditor from "./ActivityFilterEditor";
-import ActivityFilterRenderer from "./ActivityFilterRenderer";
-import MultipleSelectionWidget, {MultipleSelectionCombinedProps} from "./multiple_selection_widget";
-import withActivityQueries from "./withActivityQueries";
+import ActivityQuery from "../models/ActivityQuery";
+import MultipleSelectionWidget from "./MultipleSelectionWidget";
+import withActivityQueries from "../hoc/withActivityQueries";
+import {Activities} from "../models/Activity";
+
+interface ActivityBrowserState {
+  activities: Activities;
+  queries: Array<ActivityQuery>;
+  filters: Array<ActivityFilter>;
+}
 
 interface ActivityBrowserProps {
 }
 
 const ActivityBrowser = (props: ActivityBrowserProps) => {
-  const [activities, setActivities] = useState(new Activities());
-
-  const newQuery: ActivityQuery = {
+  const defaultActivityQuery: ActivityQuery = {
     maxCount: 50,
     before: null,
     after: null,
     includePrivate: false,
   }
 
-  const [queries, setQueries] = useState<Array<ActivityQuery>>([newQuery]);
+  const [state, setState] = useState({
+    activities: new Activities(),
+    queries: [defaultActivityQuery],
+  });
 
   useEffect(() => {
-    // TODO query from queries array
     (async () => {
+      // TODO query from queries array
       const newStravaActivities: Array<SummaryActivity> = await StravaAPI.get('/athlete/activities');
       const newActivities = new Activities();
       newActivities.add(newStravaActivities, true);
-      setActivities(newActivities);
+      setState({
+        ...state,
+        activities: newActivities
+      });
     })();
-  }, [queries]);
+  }, [state.queries]);
 
   const handleQueryUpdate = (oldQueryData: ActivityQuery, index: number) => {
     // TODO find difference between old and new selection itemArray and possibly decide that API call to Strava isn't needed
@@ -58,17 +65,17 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
 
   return (
     <div className="activity-browser">
-      <ActivityMap activities={activities} />
+      <ActivityMap activities={state.activities} />
       <SidePanel>
         <h3>Select activities:</h3>
-        <ActivityQueriesWidget itemArray={queries} newItemDefaults={newQuery} onItemUpdate={handleQueryUpdate}/>
+        <ActivityQueriesWidget itemArray={state.queries} newItemDefaults={defaultActivityQuery} onItemUpdate={handleQueryUpdate}/>
         <h3>Apply filters:</h3>
         <ActivityFiltersWidget itemArray={new Array<ActivityFilter>()} newItemDefaults={new ActivityFilter({filterType: "keyWord", filterRule: "foo"})} onItemUpdate={handleActivityFilterUpdate}/>
         <h3>Activity list:</h3>
-        <ActivityList activities={activities} />
+        <ActivityList activities={state.activities} />
       </SidePanel>
       <BottomPanel>
-        <ActivitySummary activities={activities} />
+        <ActivitySummary activities={state.activities} />
       </BottomPanel>
     </div>
   )

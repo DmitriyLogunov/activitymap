@@ -1,8 +1,8 @@
 import React from 'react';
 import {useHistory, RouteComponentProps, withRouter} from 'react-router-dom';
 import queryString from 'query-string';
-import StravaAPI from "../classes/strava/strava_api";
-import StoredAuthenticationData from "../classes/stored_authentication_data";
+import StravaAPI from "../classes/strava/StravaAPI";
+import StoredAuthenticationData from "../models/StoredAuthenticationData";
 
 interface AuthStoreProps extends RouteComponentProps {
 }

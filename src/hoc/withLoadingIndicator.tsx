@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import '../styles/WithLoadingIndicator.css'
 
 export interface WithLoadingIndicatorProps {
   showIndicator: () => void,

@@ -1,6 +1,6 @@
 import React from "react";
-import {ActivityQuery} from "../models/ActivityQuery";
-import {RendererProps} from "./multiple_selection_widget";
+import ActivityQuery from "../models/ActivityQuery";
+import {RendererProps} from "./MultipleSelectionWidget";
 
 interface ActivityQueryRendererProps extends RendererProps<ActivityQuery> {}
 

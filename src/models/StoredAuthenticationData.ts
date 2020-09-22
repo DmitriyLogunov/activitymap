@@ -1,4 +1,4 @@
-import { DetailedAthlete } from "./strava/models/detailed-athlete";
+import { DetailedAthlete } from "../classes/strava/models/detailed-athlete";
 
 export default interface StoredAuthenticationData {
   accessToken: string;

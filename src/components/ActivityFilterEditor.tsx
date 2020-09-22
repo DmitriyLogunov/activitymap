@@ -1,4 +1,4 @@
-import {EditorProps} from "./multiple_selection_widget";
+import {EditorProps} from "./MultipleSelectionWidget";
 import React, {useState} from "react";
 import ActivityFilter from "../models/ActivityFilter";
 

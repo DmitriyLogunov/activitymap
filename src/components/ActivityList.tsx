@@ -1,6 +1,6 @@
 import React from "react";
-import Activities from "../classes/activities";
-import withLoadingIndicator, {WithLoadingIndicatorProps} from "./with_loading_indicator";
+import withLoadingIndicator, {WithLoadingIndicatorProps} from "../hoc/withLoadingIndicator";
+import {Activities} from "../models/Activity";
 
 interface ActivityListProps extends WithLoadingIndicatorProps {
   activities: Activities;

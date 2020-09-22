@@ -145,22 +145,4 @@ function MultipleSelectionWidget<T>(props: MultipleSelectionCombinedProps<T>) {
   )
 }
 
-export function withCustomItems<T, CombinedHOCProps extends MultipleSelectionCustomRendererProps<T>, >(
-  Component: React.ComponentType<CombinedHOCProps>,
-  Renderer: React.ComponentType<RendererProps<T>>,
-  Editor: React.ComponentType<EditorProps<T>>,
-) {
-  type ReturnedComponentProps = Omit<CombinedHOCProps, keyof MultipleSelectionCustomRendererProps<T>>;
-  return (props: ReturnedComponentProps) => {
-    return (
-      <Component
-        {...props as CombinedHOCProps}
-
-        ItemRenderer={Renderer}
-        ItemEditor={Editor}
-      />
-    )
-  };
-}
-
 export default MultipleSelectionWidget

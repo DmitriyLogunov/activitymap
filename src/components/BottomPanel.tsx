@@ -1,5 +1,5 @@
 import React from "react";
-import '../styles/bottom_panel.css';
+import '../styles/BottomPanel.css';
 
 interface BottomPanelProps {
   children?: React.ReactNode;

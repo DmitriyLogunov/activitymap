@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import { BrowserRouter as Router, Switch, Redirect, Route } from 'react-router-dom';
-import './styles/app.css';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import StoredAuthenticationData from "./models/StoredAuthenticationData";
+import AuthorisationCallbackHandler from "./components/AuthorisationCallbackHandler";
+import ActivityBrowser from "./components/ActivityBrowser";
+import './styles/App.css';
 import 'leaflet/dist/leaflet.css'
-import StoredAuthenticationData from "./classes/stored_authentication_data";
-import AuthorisationCallbackHandler from "./components/authorisation_callback_handler";
-import ActivityBrowser from "./components/activity_browser";
 
 interface AppState {
   token?: String;

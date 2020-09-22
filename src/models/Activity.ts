@@ -1,11 +1,12 @@
-import {SummaryActivity} from "./strava/models";
+import {SummaryActivity} from "../classes/strava/models";
 
-export interface Activity {
+export default interface Activity {
   summaryActivity: SummaryActivity,
   isSelected: boolean,
 }
 
-export default class Activities {
+// TODO deprecated class - move to ActivityFilter
+export class Activities {
   private readonly activities: Array<Activity>;
 
   constructor(initialActivities: Array<Activity> | null = null) {
@@ -23,12 +24,8 @@ export default class Activities {
     }))
   }
 
-  public clone() {
-    return new Activities(this.activities.slice());
-  }
-
   public clear():void {
-    this.activities.splice(0, this.activities.length)
+
   }
 
   private applyFilters(activity: Activity) {
