@@ -7,8 +7,14 @@ export interface MultipleSelectionCustomRendererProps<T> {
 
 export interface MultipleSelectionBaseProps<T> {
   itemArray: Array<T>;
-  newItemDefaults: T;
-  onItemUpdate?: (oldItemValue: T, index: number) => void;
+  newItemDefaults?: T;
+  onItemAdd?: (newItemValue: T) => void;
+  onItemUpdate?: (newItemValue: T, index: number) => void;
+  onItemDelete?: (index: number) => void;
+}
+
+export interface BaseSelectionItem {
+  key: string;
 }
 
 export interface RendererProps<T> {
@@ -24,122 +30,152 @@ export interface EditorProps<T> {
 export interface MultipleSelectionCombinedProps<T> extends MultipleSelectionBaseProps<T>, MultipleSelectionCustomRendererProps<T> {
 }
 
-interface SelectionItem<T> {
-  data: T,
-  editorState: EditorState,
+interface MultipleSelectionState<T> {
+  editorStates: Array<EditorState>,
+  newItem?: T,
+  newItemEditorState?: EditorState,
 }
 
-type EditorState = "view" | "edit" | "add";
+type EditorState = "view" | "edit" | "updating" | "deleting" | "hidden";
 
-function MultipleSelectionWidget<T>(props: MultipleSelectionCombinedProps<T>) {
-  const [state, setState] = useState<Array<SelectionItem<T>>>(Array<SelectionItem<T>>(0));
+function MultipleSelectionWidget<T extends BaseSelectionItem>(props: MultipleSelectionCombinedProps<T>) {
+  useEffect(() => {alert("list has changed");},[props.itemArray.length])
 
-  useEffect(() => {
-    const initialState = Array<SelectionItem<T>>(0);
+  const [state, setState] = useState<MultipleSelectionState<T>>({
+    editorStates: Array(props.itemArray.length).fill("view"),
+    newItem: props.newItemDefaults,
+    newItemEditorState: "hidden",
+  });
 
-    props.itemArray.map((dataItem) => {
-      initialState.push({
-        data: dataItem,
-        editorState: "view"
-      })
-    })
+  const setEditorState = (newEditorState: EditorState, index: number) => {
+    const newEditorStates = state.editorStates.slice();
+    newEditorStates[index] = newEditorState;
 
-    setState(initialState);
-  }, []);
-
-  const toggleEditor = (index: number, newEditorState: EditorState) => {
-    const newState = state.slice();
-
-    newState[index] = {
-      ...newState[index],
-      editorState: newEditorState,
-    };
-
-    setState(newState);
+    setState({
+      ...state,
+      editorStates: newEditorStates,
+    });
   }
 
   const handleEditClick = (index: number) => {
-    toggleEditor(index, "edit");
+    setEditorState("edit", index);
   }
 
   const handleDeleteClick = (index: number) => {
-    const newState = state.slice();
-    // TODO save this object and provide undo option for a few seconds after deletion
-    const deletedSelection = newState.splice(index, 1);
+    setEditorState("deleting", index);
 
-    setState(newState);
+    if (props.onItemDelete) {
+      props.onItemDelete(index);
+    }
   }
 
-  const handleAddSelectionClick = () => {
-    const newState = state.slice();
-
-    newState.push({
-      data: props.newItemDefaults,
-      editorState: "add",
-    });
-
-    setState(newState);
+  const handleAddClick = () => {
+    setState({
+      ...state,
+      newItemEditorState: "edit"
+    })
   }
 
   const handleEditorApplyClick = (newData: T, index: number) => {
-    const oldSelectionData = state[index].data;
-
-    const newState = state.map(
-      (selectionItem, i) => i === index? {
-        selectionData: newData,
-        editorState: "view"
-      } : selectionItem
-    );
+    setEditorState("updating", index);
 
     if (props.onItemUpdate) {
-      props.onItemUpdate(oldSelectionData, index);
+      props.onItemUpdate(newData, index);
     }
   }
 
   const handleEditorCancelClick = (index: number) => {
-    const editorState = state[index].editorState;
+    if (index===state.editorStates.length) {
+      // means that item in question is
+    }
+    const newEditorStates = state.editorStates.slice();
+    newEditorStates[index] = "view";
 
-    if (editorState=="add") {
-      const newState = state.slice();
-      newState.splice(index, 1);
-      setState(newState);
-    } else {
-      toggleEditor(index, "view");
+    const editorState = state.editorStates[index];
+
+    setEditorState("view", index);
+  }
+
+  const handleAddNewCancelClick = () => {
+    setState({
+      ...state,
+      newItemEditorState: "hidden",
+    })
+  }
+
+  const  handleAddNewApplyClick = (newData: T) => {
+    setState({
+      ...state,
+      newItemEditorState: "updating",
+    })
+
+    if (props.onItemAdd && state.newItem) {
+      props.onItemAdd(newData);
     }
   }
 
   const ItemRenderer = props.ItemRenderer;
   const ItemEditor = props.ItemEditor;
 
+  const renderedItems = props.itemArray.map((item, index) => {
+    const editorState = state.editorStates[index];
+    const renderedItem = (() => {
+      switch(editorState) {
+        case "view":
+          return <div className="activity-selection-item">
+            <ItemRenderer
+              itemBeingRendered = {item}
+            />
+            <button className="edit-activity-selection" onClick={() => handleEditClick(index)}>Edit</button>
+            <button className="delete-activity-selection" onClick={() => handleDeleteClick(index)}>Delete</button>
+          </div>
+        case "edit":
+          return <ItemEditor
+            itemBeingEdited={item}
+            onApplyClick={(newSelectionData) => handleEditorApplyClick(newSelectionData, index)}
+            onCancelClick={() => handleEditorCancelClick(index)}
+          />
+        case "deleting":
+          return <div>Deleting...</div>
+        case "updating":
+          return <div>Updating...</div>
+        case "hidden":
+        default:
+          return <></>
+      }
+    })();
+
+    return <li key={item.key}>
+      {renderedItem}
+    </li>;
+  })
+
+  const renderedExtraItem = (state.newItem)
+    ? <li key={state.newItem.key}>{
+      (() => {
+        switch (state.newItemEditorState) {
+          case "hidden":
+            return <button className="add-activity-selection" onClick={() => handleAddClick()}>Add</button>
+          case "updating":
+            return <div>Updating...</div>
+          case "edit":
+            return <ItemEditor
+              itemBeingEdited={state.newItem}
+              onApplyClick={(newSelectionData) => handleAddNewApplyClick(newSelectionData)}
+              onCancelClick={() => handleAddNewCancelClick()}
+            />
+          default:
+            return <></>
+        }
+      })()
+    }</li>
+    : <></>;
+  
   return (
     <div className="activity-selection-widget">
       <ul>
-        {state.map((selectionItem, index) => {
-          return (
-            <li key={index}>
-              {(selectionItem.editorState == "edit" || selectionItem.editorState == "add")
-                ? <ItemEditor
-                  itemBeingEdited={selectionItem.data}
-                  onApplyClick={(newSelectionData) => handleEditorApplyClick(newSelectionData, index)}
-                  onCancelClick={() => handleEditorCancelClick(index)}
-                />
-                : <div className="activity-selection-item">
-                  <ItemRenderer
-                    itemBeingRendered = {selectionItem.data}
-                  />
-                  <button className="edit-activity-selection" onClick={() => handleEditClick(index)}>Edit</button>
-                  <button className="delete-activity-selection" onClick={() => handleDeleteClick(index)}>Delete</button>
-                </div>
-              }
-            </li>
-          )
-
-        })}
-        {
-          (state.length < 3)
-            ? <button className="add-activity-selection" onClick={() => handleAddSelectionClick()}>Add</button>
-            : ""
-        }
+        {renderedItems}
+        {renderedExtraItem}
       </ul>
     </div>
   )

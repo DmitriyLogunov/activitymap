@@ -5,7 +5,7 @@ import {RendererProps} from "./MultipleSelectionWidget";
 interface ActivityQueryRendererProps extends RendererProps<ActivityQuery> {}
 
 const ActivityQueryRenderer = (props: ActivityQueryRendererProps) => {
-  const item = props.itemBeingRendered;
+  const item = props.itemBeingRendered.get();
   return (<>
     Select {item.maxCount} {(!item.before) ? "latest" : ""} {(!item.includePrivate) ? "public" : ""} activities
     {(item.after)

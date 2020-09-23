@@ -2,13 +2,27 @@ import React, {useState} from "react";
 import ActivityQuery from "../models/ActivityQuery";
 import {EditorProps} from "./MultipleSelectionWidget";
 
-const ActivityqueryEditor = (props: EditorProps<ActivityQuery>) => {
-  const [state, setState] = useState<ActivityQuery>(props.itemBeingEdited);
+interface ActivityQueryEditorState {
+  item: ActivityQuery;
+}
+
+const ActivityQueryEditor = (props: EditorProps<ActivityQuery>) => {
+  const [state, setState] = useState<ActivityQueryEditorState>({
+    item: props.itemBeingEdited,
+  });
 
   const handleCountChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const newMaxCount = parseInt(event.target.value);
+
+    const existingItemFields = state.item.get();
+    const newItem = new ActivityQuery({
+      ...existingItemFields,
+      maxCount: newMaxCount,
+    });
+
     setState({
       ...state,
-      maxCount: parseInt(event.target.value)
+      item: newItem
     });
   }
 
@@ -26,10 +40,10 @@ const ActivityqueryEditor = (props: EditorProps<ActivityQuery>) => {
             name="count"
             min={1}
             max={100}
-            value={state.maxCount}
+            value={state.item.get().maxCount}
             onChange={handleCountChange}
           />
-          {state.maxCount}
+          {state.item.get().maxCount}
         </label>
 
         <br/>
@@ -42,11 +56,11 @@ const ActivityqueryEditor = (props: EditorProps<ActivityQuery>) => {
 
         <br/>
 
-        <button onClick={() => props.onApplyClick(state)}>Apply</button>
+        <button onClick={() => props.onApplyClick(state.item)}>Apply</button>
         <button onClick={() => props.onCancelClick()}>Cancel</button>
       </form>
     </div>
   )
 };
 
-export default ActivityqueryEditor;
+export default ActivityQueryEditor;
