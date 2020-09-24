@@ -3,10 +3,10 @@ import '../styles/ActivityMap.css';
 import {Map, Marker, Polyline, Popup, TileLayer} from 'react-leaflet';
 import L, {LatLng} from 'leaflet';
 import polyUtil from 'polyline-encoded';
-import {Activities} from "../models/Activity";
+import FilteredActivities from "../models/FilteredActivities";
 
 interface ActivityMapProps {
-  activities: Activities;
+  filteredActivities: FilteredActivities;
 }
 
 const ActivityMap = (props: ActivityMapProps) => {
@@ -18,20 +18,19 @@ const ActivityMap = (props: ActivityMapProps) => {
 
   const polylines = new Array<Array<LatLng>>(0);
 
-
-  props.activities.getFiltered().map(activity => {
+  for (const activity of props.filteredActivities.getFilteredActivitiesAsArray()) {
     const polyline = Array<LatLng>(0);
 
-    const polylineEncoded = activity.summaryActivity.map.summary_polyline;
-    const latlngs: Array<[number, number]> = polyUtil.decode(polylineEncoded);
+    const polylineEncoded = activity.map.summary_polyline;
+    const latLngs: Array<[number, number]> = polyUtil.decode(polylineEncoded);
 
-    latlngs.map(polyLineNode => {
+    latLngs.map(polyLineNode => {
       const latLng = new LatLng(polyLineNode[0], polyLineNode[1]);
       polyline.push(latLng);
     })
 
     polylines.push(polyline);
-  });
+  };
 
   // TODO: Centroid of selected activities, and have checkbox to uncheck and opt out of auto-centering
   const mapCenter: LatLng = new LatLng(state.lat, state.lng);

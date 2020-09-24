@@ -7,7 +7,7 @@ export interface MultipleSelectionCustomRendererProps<T> {
 
 export interface MultipleSelectionBaseProps<T> {
   itemArray: Array<T>;
-  newItemDefaults?: T;
+  newItem?: T;
   onItemAdd?: (newItemValue: T) => void;
   onItemUpdate?: (newItemValue: T, index: number) => void;
   onItemDelete?: (index: number) => void;
@@ -39,11 +39,9 @@ interface MultipleSelectionState<T> {
 type EditorState = "view" | "edit" | "updating" | "deleting" | "hidden";
 
 function MultipleSelectionWidget<T extends BaseSelectionItem>(props: MultipleSelectionCombinedProps<T>) {
-  useEffect(() => {alert("list has changed");},[props.itemArray.length])
-
   const [state, setState] = useState<MultipleSelectionState<T>>({
     editorStates: Array(props.itemArray.length).fill("view"),
-    newItem: props.newItemDefaults,
+    newItem: props.newItem,
     newItemEditorState: "hidden",
   });
 

@@ -12,11 +12,18 @@ import ActivityFilter from "../models/ActivityFilter";
 import ActivityQuery from "../models/ActivityQuery";
 import MultipleSelectionWidget from "./MultipleSelectionWidget";
 import withActivityQueries from "../hoc/withActivityQueries";
-import {Activities} from "../models/Activity";
+import Activity, {Activities} from "../models/Activity";
+import FilteredActivities from "../models/FilteredActivities";
+
+interface SavedQueryResponse {
+  query: ActivityQuery,
+  data: Array<SummaryActivity>,
+}
 
 interface ActivityBrowserState {
   activities: Activities;
   queries: Array<ActivityQuery>;
+  savedResponses: Array<SavedQueryResponse | null>;
   filters: Array<ActivityFilter>;
 }
 
@@ -31,21 +38,62 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
     includePrivate: false,
   };
 
-  const [state, setState] = useState({
+  const [state, setState] = useState<ActivityBrowserState>({
     activities: new Activities(),
     queries: [new ActivityQuery(queryDefaults)],
+    filters: [],
+    savedResponses: [],
   });
+
+  const saveActivityResponse = (query: ActivityQuery, index: number, data: Array<SummaryActivity>) => {
+    const newSavedResponses = state.savedResponses.slice();
+
+    while (index >= newSavedResponses.length) {
+      newSavedResponses.push(null);
+    }
+
+    newSavedResponses[index] = {
+      query: query,
+      data: data,
+    }
+
+    setState({
+      ...state,
+      savedResponses: newSavedResponses
+    })
+  }
+
+  const getSavedActivityQueryResponse = (query: ActivityQuery, index: number): Array<SummaryActivity> | null => {
+    const savedResponse = state.savedResponses[index];
+    if (savedResponse) {
+      if (query.key === savedResponse.query.key) {
+        return savedResponse.data;
+      }
+    }
+
+    return null;
+  }
 
   useEffect(() => {
     (async () => {
-      // TODO query from queries array
-      alert ("querying!");
-      const newStravaActivities: Array<SummaryActivity> = await StravaAPI.get('/athlete/activities');
-      const newActivities = new Activities();
-      newActivities.add(newStravaActivities, true);
+      const newStravaActivities: Activities = new Activities();
+      await Promise.all(
+        state.queries.map(async (query, index: number) => {
+          let savedResponse = getSavedActivityQueryResponse(query, index);
+
+          if (savedResponse) {
+            newStravaActivities.add(savedResponse);
+          } else {
+            const returnedActivities: Array<Activity> = await StravaAPI.get('/athlete/activities');
+            newStravaActivities.add(returnedActivities);
+            saveActivityResponse(query, index, returnedActivities);
+          }
+        })
+      );
+
       setState({
         ...state,
-        activities: newActivities
+        activities: newStravaActivities
       });
     })();
   }, [state.queries]);
@@ -64,25 +112,48 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
     });
   }
 
+  const handleQueryAdd = (newQueryData: ActivityQuery) => {
+    const newQueries = state.queries.slice();
+    newQueries.push(newQueryData);
+
+    setState({
+      ...state,
+      queries: newQueries,
+    })
+  }
+
+  const handleQueryDelete = (index: number) => {
+    const newQueries = state.queries.slice();
+    newQueries.splice(index, 1);
+
+    setState({
+      ...state,
+      queries: newQueries,
+    })
+  }
+
   const handleActivityFilterUpdate = (item: ActivityFilter, index: number) => {
   }
 
   const ActivityQueriesWidget = withActivityQueries(MultipleSelectionWidget);
   const ActivityFiltersWidget = withActivityFilters(MultipleSelectionWidget);
 
+  // TODO apply filters and move into updater func
+  const filteredActivities = new FilteredActivities(state.activities);
+
   return (
     <div className="activity-browser">
-      <ActivityMap activities={state.activities} />
+      <ActivityMap filteredActivities={filteredActivities} />
       <SidePanel>
         <h3>Select activities:</h3>
-        <ActivityQueriesWidget itemArray={state.queries} newItemDefaults={new ActivityQuery(queryDefaults)} onItemUpdate={handleQueryUpdate}/>
+        <ActivityQueriesWidget itemArray={state.queries} newItem={new ActivityQuery(queryDefaults)} onItemUpdate={handleQueryUpdate} onItemAdd={handleQueryAdd} onItemDelete={handleQueryDelete}/>
         <h3>Apply filters:</h3>
-        <ActivityFiltersWidget itemArray={new Array<ActivityFilter>()} newItemDefaults={new ActivityFilter({filterType: "keyWord", filterRule: "foo"})} onItemUpdate={handleActivityFilterUpdate}/>
+        <ActivityFiltersWidget itemArray={new Array<ActivityFilter>()} newItem={new ActivityFilter({filterType: "keyWord", filterRule: "foo"})} onItemUpdate={handleActivityFilterUpdate}/>
         <h3>Activity list:</h3>
-        <ActivityList activities={state.activities} />
+        <ActivityList filteredActivities={filteredActivities} />
       </SidePanel>
       <BottomPanel>
-        <ActivitySummary activities={state.activities} />
+        <ActivitySummary filteredActivities={filteredActivities} />
       </BottomPanel>
     </div>
   )

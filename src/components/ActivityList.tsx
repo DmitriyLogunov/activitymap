@@ -1,9 +1,9 @@
 import React from "react";
 import withLoadingIndicator, {WithLoadingIndicatorProps} from "../hoc/withLoadingIndicator";
-import {Activities} from "../models/Activity";
+import FilteredActivities from "../models/FilteredActivities";
 
 interface ActivityListProps extends WithLoadingIndicatorProps {
-  activities: Activities;
+  filteredActivities: FilteredActivities;
 }
 
 const ActivityList = withLoadingIndicator((props: ActivityListProps) => {
@@ -11,8 +11,8 @@ const ActivityList = withLoadingIndicator((props: ActivityListProps) => {
 
   return (<div className="activity-list">
     <ul>
-      {props.activities.get().map(activity => {return (
-        <li key={activity.summaryActivity.id}>{activity.summaryActivity.name}</li>
+      {props.filteredActivities.getFilteredActivitiesAsArray().map(activity => {return (
+        <li key={activity.id}>{activity.name}</li>
       )})}
     </ul>
   </div>);

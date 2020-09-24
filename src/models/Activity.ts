@@ -1,48 +1,39 @@
 import {SummaryActivity} from "../classes/strava/models";
 
-export default interface Activity {
-  summaryActivity: SummaryActivity,
-  isSelected: boolean,
-}
+export default interface Activity extends SummaryActivity {};
 
-// TODO deprecated class - move to ActivityFilter
 export class Activities {
-  private readonly activities: Array<Activity>;
+  protected activities: Map<number, Activity>;
 
-  constructor(initialActivities: Array<Activity> | null = null) {
-    if (initialActivities) {
-      this.activities = initialActivities;
-    } else {
-      this.activities = Array<Activity>(0)
+  constructor(copyFrom?: Activities) {
+    this.activities = new Map<number, Activity>();
+    if (copyFrom) {
+      this.activities = new Map<number, Activity>();
+      copyFrom.get().forEach((activity, key) => {
+        this.activities.set(key, activity);
+      })
     }
   }
 
-  public add(newActivities: Array<SummaryActivity>, areSelected: boolean = false):void {
-    newActivities.map(newActivity => this.activities.push({
-      summaryActivity: newActivity,
-      isSelected: areSelected,
-    }))
+  public add(newActivities: Array<Activity>):void {
+    newActivities.forEach(newActivity =>
+      this.activities.set(
+        newActivity.id,
+        newActivity
+      )
+    );
   }
 
   public clear():void {
-
+    this.activities = new Map<number, Activity>();
   }
 
-  private applyFilters(activity: Activity) {
-    if (!activity.isSelected) {
-      return false;
-    }
-
-    // TODO: apply other filters
-
-    return true;
-  }
-
-  public get(): Array<Activity> {
+  public get(): Map<number, Activity> {
     return this.activities;
   }
 
-  public getFiltered(): Array<Activity> {
-    return this.activities.filter(this.applyFilters);
+  public getAsArray(): Array<Activity> {
+    return Array.from(this.activities.values());
   }
+
 }

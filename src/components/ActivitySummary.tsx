@@ -1,18 +1,18 @@
 import React from "react";
-import {Activities} from "../models/Activity";
+import FilteredActivities from "../models/FilteredActivities";
 
 interface ActivitySummaryProps {
-  activities: Activities;
+  filteredActivities: FilteredActivities;
 }
 
 const ActivitySummary = (props: ActivitySummaryProps) => {
-  const filteredActivities = props.activities.getFiltered();
+  const filteredActivities = props.filteredActivities.getFilteredActivitiesAsArray();
 
   let count = filteredActivities.length;
   let totalDistance = 0;
 
   for (let i=0;i<filteredActivities.length;i++) {
-    const summaryActivity = filteredActivities[i].summaryActivity;
+    const summaryActivity = filteredActivities[i];
     totalDistance += summaryActivity.distance;
   }
 
