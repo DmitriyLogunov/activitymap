@@ -6,17 +6,21 @@ interface ActivityQueryRendererProps extends RendererProps<ActivityQuery> {}
 
 const ActivityQueryRenderer = (props: ActivityQueryRendererProps) => {
   const item = props.itemBeingRendered.get();
+  const selector = item.selector;
+
+  const selectorText = (()=>{
+    switch (selector.type) {
+      case "latest":
+        return <>Latest {selector.count} {(!item.includePrivate) ? "public" : ""} activities</>
+      case "dateRange":
+        return <>From {selector.startDate} to {selector.endDate}</>
+      case "startDate":
+        return <>Starting from {selector.startDate} until now"</>
+    }
+
+  })()
   return (<>
-    Select {item.maxCount} {(!item.before) ? "latest" : ""} {(!item.includePrivate) ? "public" : ""} activities
-    {(item.after)
-      ? <> from {item.after}</>
-      : ""
-    }
-    {
-      (item.before)
-        ? <> to {item.before}</>
-        : ""
-    }
+    {selectorText}
     {(item.includePrivate)
       ? ", including private activities and private zones."
       : ""

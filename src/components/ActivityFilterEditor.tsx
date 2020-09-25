@@ -43,8 +43,8 @@ const ActivityFilterEditor = (props: ActivityFilterEditorProps) => {
           {filterValueInput}
         </label>
 
-        <button onClick={() => props.onApplyClick(state.filter)}>Apply</button>
-        <button onClick={() => props.onCancelClick()}>Cancel</button>
+        <button onClick={() => props.onEditApply(state.filter)}>Apply</button>
+        <button onClick={() => props.onEditCancel()}>Cancel</button>
       </form>
     </div>
   );

@@ -41,7 +41,7 @@ function App() {
           </Route>
           <Route>
             {isAuthenticated && storedAuthenticationData
-              ? <ActivityBrowser />
+              ? <ActivityBrowser isAuthorisedToShowPrivateActivities={false}/>
               : <LoginButton url = {oAuthUrl}/>
             }
           </Route>

@@ -23,8 +23,8 @@ export interface RendererProps<T> {
 
 export interface EditorProps<T> {
   itemBeingEdited: T,
-  onApplyClick: (newSelection: T) => void;
-  onCancelClick: () => void;
+  onEditApply: (newSelection: T) => void;
+  onEditCancel: () => void;
 }
 
 export interface MultipleSelectionCombinedProps<T> extends MultipleSelectionBaseProps<T>, MultipleSelectionCustomRendererProps<T> {
@@ -130,8 +130,8 @@ function MultipleSelectionWidget<T extends BaseSelectionItem>(props: MultipleSel
         case "edit":
           return <ItemEditor
             itemBeingEdited={item}
-            onApplyClick={(newSelectionData) => handleEditorApplyClick(newSelectionData, index)}
-            onCancelClick={() => handleEditorCancelClick(index)}
+            onEditApply={(newSelectionData) => handleEditorApplyClick(newSelectionData, index)}
+            onEditCancel={() => handleEditorCancelClick(index)}
           />
         case "deleting":
           return <div>Deleting...</div>
@@ -159,8 +159,8 @@ function MultipleSelectionWidget<T extends BaseSelectionItem>(props: MultipleSel
           case "edit":
             return <ItemEditor
               itemBeingEdited={state.newItem}
-              onApplyClick={(newSelectionData) => handleAddNewApplyClick(newSelectionData)}
-              onCancelClick={() => handleAddNewCancelClick()}
+              onEditApply={(newSelectionData) => handleAddNewApplyClick(newSelectionData)}
+              onEditCancel={() => handleAddNewCancelClick()}
             />
           default:
             return <></>

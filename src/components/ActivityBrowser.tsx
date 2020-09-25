@@ -9,7 +9,7 @@ import BottomPanel from "./BottomPanel";
 import ActivityList from "./ActivityList";
 import withActivityFilters from "../hoc/withActivityFilters";
 import ActivityFilter from "../models/ActivityFilter";
-import ActivityQuery from "../models/ActivityQuery";
+import ActivityQuery, {ActivityQueryData} from "../models/ActivityQuery";
 import MultipleSelectionWidget from "./MultipleSelectionWidget";
 import withActivityQueries from "../hoc/withActivityQueries";
 import Activity, {Activities} from "../models/Activity";
@@ -28,14 +28,16 @@ interface ActivityBrowserState {
 }
 
 interface ActivityBrowserProps {
+  isAuthorisedToShowPrivateActivities: boolean;
 }
 
 const ActivityBrowser = (props: ActivityBrowserProps) => {
-  const queryDefaults = {
-    before: null,
-    after: null,
-    maxCount: 50,
-    includePrivate: false,
+  const queryDefaults: ActivityQueryData = {
+    selector: {
+      type: "latest",
+      count: 30,
+    },
+    includePrivate: props.isAuthorisedToShowPrivateActivities,
   };
 
   const [state, setState] = useState<ActivityBrowserState>({

@@ -1,63 +1,128 @@
 import React, {useState} from "react";
-import ActivityQuery from "../models/ActivityQuery";
+import ActivityQuery, {ActivitySelector, ActivitySelectorTypes} from "../models/ActivityQuery";
 import {EditorProps} from "./MultipleSelectionWidget";
 
 interface ActivityQueryEditorState {
-  item: ActivityQuery;
+  type: string;
+  count?: number;
+  startDate?: number;
+  endDate?: number;
 }
 
-const ActivityQueryEditor = (props: EditorProps<ActivityQuery>) => {
+type ActivityQueryEditorProps = EditorProps<ActivityQuery>;
+
+const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
+  const selector = props.itemBeingEdited.get().selector;
   const [state, setState] = useState<ActivityQueryEditorState>({
-    item: props.itemBeingEdited,
+    ...selector
   });
 
-  const handleCountChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    const newMaxCount = parseInt(event.target.value);
-
-    const existingItemFields = state.item.get();
-    const newItem = new ActivityQuery({
-      ...existingItemFields,
-      maxCount: newMaxCount,
-    });
-
+  const handleCountChange = (newCount: number): void => {
     setState({
       ...state,
-      item: newItem
+      type: "latest",
+      count: newCount,
     });
   }
 
-  return (<div className="activity-selector">
-      <form>
-        <label>
-          Activity range:
-        </label>
-        <br/>
+  const handleTypeChange = (newType: string) => {
+    setState({
+      ...state,
+      type: newType,
+    });
+  }
 
-        <label>
+  const getSelector = (): ActivitySelector | null => {
+    switch (state.type) {
+      case "latest":
+        if (state.count) {
+          return {
+            type: "latest",
+            count: state.count,
+          }
+        } else {
+          return null;
+        }
+      case "dateRange":
+        if (state.startDate && state.endDate) {
+          return {
+            type: "dateRange",
+            startDate: state.startDate,
+            endDate: state.endDate,
+          }
+        } else {
+          return null;
+        }
+      case "startDate":
+        if (state.startDate) {
+          return {
+            type: "startDate",
+            startDate: state.startDate,
+          }
+        } else {
+          return null;
+        }
+      default:
+        return null;
+    }
+  }
+
+  const handleApplyClick = () => {
+    const selector = getSelector();
+    if (selector) {
+      const newActivityQuery = new ActivityQuery({
+        selector: selector,
+        includePrivate: props.itemBeingEdited.get().includePrivate,
+      });
+
+      props.onEditApply(newActivityQuery);
+    }
+  }
+
+  const selectorSpecificFormFields = (()=>{
+    switch (state.type) {
+      case "latest":
+        return <label>
           Max activities:
           <input
             type="range"
             name="count"
             min={1}
             max={100}
-            value={state.item.get().maxCount}
-            onChange={handleCountChange}
+            value={state.count}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleCountChange(parseInt(event.target.value))}
           />
-          {state.item.get().maxCount}
+          <input
+            type="text"
+            name="count-text"
+            value={state.count}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleCountChange(parseInt(event.target.value))}
+          >
+          </input>
         </label>
+      default:
+        return <></>
+    }
+  })();
 
+  return (<div className="activity-selector">
+      <form>
+        <label>
+          Select by:
+          <select name="type" onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleTypeChange(event.target.value)}>
+            <option value={"latest"}>Latest activities</option>
+            <option value={"startDate"}>Back until selected date</option>
+            <option value={"dateRange"}>Date range</option>
+          </select>
+        </label>
         <br/>
+
+        {selectorSpecificFormFields}
 
         <label>Date range: {}</label>
 
-        <br/>
-
-        <label>Include private activities</label>
-
-        <br/>
-
-        <button onClick={() => props.onApplyClick(state.item)}>Apply</button>
-        <button onClick={() => props.onCancelClick()}>Cancel</button>
+        <button onClick={() => handleApplyClick()}>Apply</button>
+        <button onClick={() => props.onEditCancel()}>Cancel</button>
       </form>
     </div>
   )

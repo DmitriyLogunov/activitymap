@@ -1,15 +1,32 @@
 import {BaseSelectionItem} from "../components/MultipleSelectionWidget";
-import md5 from "md5";
+
+export type ActivitySelectorTypes = "latest" | "dateRange" | "startDate";
+
+export type ActivitySelector =
+  {
+    type: "latest",
+    count: number,
+  }
+  |
+  {
+    type: "startDate",
+    startDate: number,
+  }
+  |
+  {
+    type: "dateRange",
+    startDate: number,
+    endDate: number,
+  }
 
 export interface ActivityQueryData {
-  after: number | null;
-  before: number | null;
-  maxCount: number;
+  selector: ActivitySelector;
   includePrivate: boolean;
 }
 
 export default class ActivityQuery implements BaseSelectionItem {
   private activityQueryData: ActivityQueryData;
+  private static keyCounter = 0;
 
   public key: string;
 
@@ -19,18 +36,11 @@ export default class ActivityQuery implements BaseSelectionItem {
 
   public set(newData: ActivityQueryData) {
     this.activityQueryData = { ...newData };
-    this.key = this.generateUniqueKey();
   }
 
   private generateUniqueKey(): string {
-    const data = this.activityQueryData;
-    return md5(
-      (data.after ? data.after.toString() : "") + "-" +
-      (data.before ? data.before.toString() : "") + "-" +
-      data.maxCount.toString() + "-" +
-      data.includePrivate.toString() + "-" +
-      Date.now().toString()
-    );
+    ActivityQuery.keyCounter++;
+    return ActivityQuery.keyCounter.toString();
   }
 
   constructor(initialData: ActivityQueryData) {
