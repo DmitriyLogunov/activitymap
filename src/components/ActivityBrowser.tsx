@@ -28,7 +28,7 @@ interface ActivityBrowserState {
 }
 
 interface ActivityBrowserProps {
-  isAuthorisedToShowPrivateActivities: boolean;
+  includePrivateActivities: boolean;
 }
 
 const ActivityBrowser = (props: ActivityBrowserProps) => {
@@ -37,7 +37,7 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
       type: "latest",
       count: 30,
     },
-    includePrivate: props.isAuthorisedToShowPrivateActivities,
+    includePrivate: props.includePrivateActivities,
   };
 
   const [state, setState] = useState<ActivityBrowserState>({

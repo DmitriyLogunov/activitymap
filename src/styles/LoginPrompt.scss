@@ -1,0 +1,30 @@
+.login-button, .login-parameters {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.login-parameters {
+  width: 500px;
+}
+
+.login-button {
+  width: 300px;
+  height: 30px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 10px;
+  background-color: #fc5200;
+  text-decoration: none;
+  font-size: 1.2em;
+  color: white;
+  display: block;
+  padding-top: .1em;
+
+  &:hover {
+    background-color: #cc4200;
+    border-color: #cc4200;
+    color: #fff;
+  }
+}
