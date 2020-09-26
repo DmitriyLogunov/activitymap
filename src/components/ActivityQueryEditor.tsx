@@ -111,7 +111,7 @@ const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
           Select by:
           <select name="type" onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleTypeChange(event.target.value)}>
             <option value={"latest"}>Latest activities</option>
-            <option value={"startDate"}>Back until selected date</option>
+            <option value={"startDate"}>Latest, from selected date</option>
             <option value={"dateRange"}>Date range</option>
           </select>
         </label>

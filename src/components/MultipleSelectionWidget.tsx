@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import '../styles/MultipleSelectionWidget.scss';
 
 export interface MultipleSelectionCustomRendererProps<T> {
   ItemRenderer: React.ComponentType<RendererProps<T>>;
@@ -120,19 +121,23 @@ function MultipleSelectionWidget<T extends BaseSelectionItem>(props: MultipleSel
     const renderedItem = (() => {
       switch(editorState) {
         case "view":
-          return <div className="activity-selection-item">
+          return <>
+            <div className="item-text">
             <ItemRenderer
               itemBeingRendered = {item}
             />
-            <button className="edit-activity-selection" onClick={() => handleEditClick(index)}>Edit</button>
-            <button className="delete-activity-selection" onClick={() => handleDeleteClick(index)}>Delete</button>
-          </div>
+            </div>
+            <div className="item-controls">
+              <button className="item-editbutton" onClick={() => handleEditClick(index)}>Edit</button>
+              <button className="item-deletebutton" onClick={() => handleDeleteClick(index)}>Delete</button>
+            </div>
+          </>
         case "edit":
-          return <ItemEditor
+          return <div className="item-editor"><ItemEditor
             itemBeingEdited={item}
             onEditApply={(newSelectionData) => handleEditorApplyClick(newSelectionData, index)}
             onEditCancel={() => handleEditorCancelClick(index)}
-          />
+          /></div>
         case "deleting":
           return <div>Deleting...</div>
         case "updating":
@@ -143,17 +148,17 @@ function MultipleSelectionWidget<T extends BaseSelectionItem>(props: MultipleSel
       }
     })();
 
-    return <li key={item.key}>
+    return <li key={item.key} className={"selection-item"}>
       {renderedItem}
     </li>;
   })
 
   const renderedExtraItem = (state.newItem)
-    ? <li key={state.newItem.key}>{
+    ? <li key={state.newItem.key} className={"selection-item"}>{
       (() => {
         switch (state.newItemEditorState) {
           case "hidden":
-            return <button className="add-activity-selection" onClick={() => handleAddClick()}>Add</button>
+            return <button className="item-addbutton" onClick={() => handleAddClick()}>Add</button>
           case "updating":
             return <div>Updating...</div>
           case "edit":
@@ -170,8 +175,8 @@ function MultipleSelectionWidget<T extends BaseSelectionItem>(props: MultipleSel
     : <></>;
   
   return (
-    <div className="activity-selection-widget">
-      <ul>
+    <div className="selection-widget">
+      <ul className={"selection-list"}>
         {renderedItems}
         {renderedExtraItem}
       </ul>
