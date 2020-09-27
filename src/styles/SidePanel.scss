@@ -1,0 +1,20 @@
+.side-panel {
+    border: 1px solid gray;
+    background: lightgray;
+    min-width: 150px;
+    position: relative;
+    box-sizing: border-box;
+    z-index: 2;
+    padding: 5px;
+
+    &.right {
+        float: right;
+        width: 15vw;
+        font-size: 0.95em;
+    }
+
+    &.left {
+        width: 15vw;
+        float: left;
+    }
+}

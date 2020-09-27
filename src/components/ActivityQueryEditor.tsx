@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import ActivityQuery, {ActivitySelector, ActivitySelectorTypes} from "../models/ActivityQuery";
+import ActivityQuery, {ActivitySelector} from "../models/ActivityQuery";
 import {EditorProps} from "./MultipleSelectionWidget";
 
 interface ActivityQueryEditorState {

@@ -1,5 +1,6 @@
 import React from "react";
 import FilteredActivities from "../models/FilteredActivities";
+import NumberFormat from "react-number-format";
 
 interface ActivitySummaryProps {
   filteredActivities: FilteredActivities;
@@ -11,13 +12,13 @@ const ActivitySummary = (props: ActivitySummaryProps) => {
   let count = filteredActivities.length;
   let totalDistance = 0;
 
-  for (let i=0;i<filteredActivities.length;i++) {
-    const summaryActivity = filteredActivities[i];
-    totalDistance += summaryActivity.distance;
+  for (const activity of filteredActivities) {
+    totalDistance += activity.distance;
   }
 
   return (<div className="activity-summary">
-      Activity summary: {count} activities in total {totalDistance/1000} kilometers
+      {count} activities<br/>
+      <NumberFormat value={totalDistance/1000} displayType={'text'} thousandSeparator={true} decimalScale={2} /> kilometers
   </div>);
 }
 

@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import StoredAuthenticationData from "./models/StoredAuthenticationData";
 import AuthorisationCallbackHandler from "./components/AuthorisationCallbackHandler";
@@ -67,7 +67,7 @@ function App() {
       </Router>
     );
   } catch (e) {
-    const showDebugInfo: boolean = process.env.REACT_APP_SHOW_DEBUG_INFO=='true';
+    const showDebugInfo: boolean = process.env.REACT_APP_SHOW_DEBUG_INFO==='true';
     return (
       <div className="Error">Oops, a slight hiccup... Please restart from the <a href="/">home page</a>.
         {showDebugInfo

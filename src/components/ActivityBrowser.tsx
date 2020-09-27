@@ -14,16 +14,12 @@ import MultipleSelectionWidget from "./MultipleSelectionWidget";
 import withActivityQueries from "../hoc/withActivityQueries";
 import Activity, {Activities} from "../models/Activity";
 import FilteredActivities from "../models/FilteredActivities";
+import ActivityLoader from "./ActivityLoader";
 
-interface SavedQueryResponse {
-  query: ActivityQuery,
-  data: Array<SummaryActivity>,
-}
 
 interface ActivityBrowserState {
   activities: Activities;
   queries: Array<ActivityQuery>;
-  savedResponses: Array<SavedQueryResponse | null>;
   filters: Array<ActivityFilter>;
 }
 
@@ -44,61 +40,7 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
     activities: new Activities(),
     queries: [new ActivityQuery(queryDefaults)],
     filters: [],
-    savedResponses: [],
   });
-
-  const saveActivityResponse = (query: ActivityQuery, index: number, data: Array<SummaryActivity>) => {
-    const newSavedResponses = state.savedResponses.slice();
-
-    while (index >= newSavedResponses.length) {
-      newSavedResponses.push(null);
-    }
-
-    newSavedResponses[index] = {
-      query: query,
-      data: data,
-    }
-
-    setState({
-      ...state,
-      savedResponses: newSavedResponses
-    })
-  }
-
-  const getSavedActivityQueryResponse = (query: ActivityQuery, index: number): Array<SummaryActivity> | null => {
-    const savedResponse = state.savedResponses[index];
-    if (savedResponse) {
-      if (query.key === savedResponse.query.key) {
-        return savedResponse.data;
-      }
-    }
-
-    return null;
-  }
-
-  useEffect(() => {
-    (async () => {
-      const newStravaActivities: Activities = new Activities();
-      await Promise.all(
-        state.queries.map(async (query, index: number) => {
-          let savedResponse = getSavedActivityQueryResponse(query, index);
-
-          if (savedResponse) {
-            newStravaActivities.add(savedResponse);
-          } else {
-            const returnedActivities: Array<Activity> = await StravaAPI.get('/athlete/activities');
-            newStravaActivities.add(returnedActivities);
-            saveActivityResponse(query, index, returnedActivities);
-          }
-        })
-      );
-
-      setState({
-        ...state,
-        activities: newStravaActivities
-      });
-    })();
-  }, [state.queries]);
 
   const handleQueryUpdate = (newQueryData: ActivityQuery, index: number) => {
     // TODO find difference between old and new selection itemArray and possibly decide that API call to Strava isn't needed
@@ -134,6 +76,13 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
     })
   }
 
+  const handleActivityListUpdate = (newActivities: Activities) => {
+    setState({
+      ...state,
+      activities: newActivities
+    });
+  }
+
   const handleActivityFilterUpdate = (item: ActivityFilter, index: number) => {
   }
 
@@ -145,17 +94,22 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
 
   return (
     <div className="activity-browser">
+      <ActivityLoader queries={state.queries} onActivitiesUpdate={handleActivityListUpdate} />
       <ActivityMap filteredActivities={filteredActivities} />
-      <SidePanel>
+      <SidePanel side={"left"}>
         <h3>Select activities:</h3>
         <ActivityQueriesWidget itemArray={state.queries} newItem={new ActivityQuery(queryDefaults)} onItemUpdate={handleQueryUpdate} onItemAdd={handleQueryAdd} onItemDelete={handleQueryDelete}/>
         <h3>Apply filters:</h3>
         <ActivityFiltersWidget itemArray={new Array<ActivityFilter>()} newItem={new ActivityFilter({filterType: "keyWord", filterRule: "foo"})} onItemUpdate={handleActivityFilterUpdate}/>
+        <h3>Activity summary:</h3>
+        <ActivitySummary filteredActivities={filteredActivities} />
+      </SidePanel>
+      <SidePanel side={"right"}>
         <h3>Activity list:</h3>
         <ActivityList filteredActivities={filteredActivities} />
       </SidePanel>
       <BottomPanel>
-        <ActivitySummary filteredActivities={filteredActivities} />
+
       </BottomPanel>
     </div>
   )

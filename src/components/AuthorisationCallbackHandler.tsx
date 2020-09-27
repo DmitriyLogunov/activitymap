@@ -9,7 +9,6 @@ interface AuthStoreProps extends RouteComponentProps {
 
 const AuthorisationCallbackHandler = (props: AuthStoreProps) => {
   const mainAppRoute = "/";
-  const history = useHistory();
 
   async function obtainTokens(code: string) {
     const responseData = await StravaAPI.post(process.env.REACT_APP_STRAVA_TOKEN_ROUTE, {

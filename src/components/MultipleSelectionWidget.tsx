@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import '../styles/MultipleSelectionWidget.scss';
 
 export interface MultipleSelectionCustomRendererProps<T> {
@@ -84,13 +84,8 @@ function MultipleSelectionWidget<T extends BaseSelectionItem>(props: MultipleSel
   }
 
   const handleEditorCancelClick = (index: number) => {
-    if (index===state.editorStates.length) {
-      // means that item in question is
-    }
     const newEditorStates = state.editorStates.slice();
     newEditorStates[index] = "view";
-
-    const editorState = state.editorStates[index];
 
     setEditorState("view", index);
   }

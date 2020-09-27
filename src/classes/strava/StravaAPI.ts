@@ -10,8 +10,8 @@ interface AuthenticationData {
 }
 
 export default class StravaAPI {
-  // TODO store token in the application context and use from there
-  private static getToken() {
+  // TODO refactor token storage
+  public static getToken() {
     const storedAuthenticationdata = localStorage.getItem('authenticationData');
     const authenticationData: AuthenticationData | null = (storedAuthenticationdata
         ? JSON.parse(storedAuthenticationdata)
@@ -26,7 +26,6 @@ export default class StravaAPI {
     }
   }
 
-  // TODO add token usage here
   public static async post(endpoint: string | undefined, parameters: Object) {
     if (typeof(endpoint)==='undefined') {
       throw("App misconfiguration: API endpoint declaration not found. Check your .env file.");
