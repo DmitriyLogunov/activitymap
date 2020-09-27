@@ -3,6 +3,7 @@ import ActivityQuery from "../models/ActivityQuery";
 import {SummaryActivity} from "../classes/strava/models";
 import Activity, {Activities} from "../models/Activity";
 import StravaAPI from "../classes/strava/StravaAPI";
+import {Strava} from "../classes/strava/Strava";
 
 interface SavedQueryResponse {
   query: ActivityQuery,
@@ -62,9 +63,19 @@ const ActivityLoader = (props: ActivityLoaderProps) => {
           if (savedResponse) {
             newActivities.add(savedResponse);
           } else {
-            const returnedActivities: Array<Activity> = await StravaAPI.get('/athlete/activities');
-            newActivities.add(returnedActivities);
-            saveActivityResponse(query, index, returnedActivities);
+            // const returnedActivities: Array<Activity> = await StravaAPI.get('/athlete/activities');
+            const [token] = StravaAPI.getToken();
+            if (token) {
+              const stravaApi = new Strava(token);
+              const selector = query.getSelector();
+              switch (selector.type) {
+                case "latest":
+                  const athleteActivities: Array<Activity> = await stravaApi.getLoggedInAthleteActivities(undefined,undefined,undefined,selector.count);
+                  newActivities.add(athleteActivities);
+              }
+
+              saveActivityResponse(query, index, newActivities.getAsArray());
+            }
           }
         })
       );

@@ -34,6 +34,10 @@ export default class ActivityQuery implements BaseSelectionItem {
     return this.activityQueryData;
   }
 
+  public getSelector() {
+    return this.activityQueryData.selector;
+  }
+
   public set(newData: ActivityQueryData) {
     this.activityQueryData = { ...newData };
   }

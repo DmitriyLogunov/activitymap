@@ -49,31 +49,31 @@ export default class StravaAPI {
     return responseData;
   }
 
-  public static async get(endpoint: string | undefined) {
-    if (typeof(endpoint)==='undefined') {
-      throw("App misconfiguration: API endpoint declaration not found. Check your .env file.");
-    }
-
-    const [token, tokenType] = this.getToken();
-
-    const response = await fetch(
-      process.env.REACT_APP_STRAVA_API_BASE_URL + endpoint,
-      {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': tokenType + ' ' + token,
-      }
-    });
-
-    if (!response.ok) {
-      throw("Fetching of Strava API endpoint " + endpoint + " has failed: " + response.statusText);
-    }
-
-    const responseData = await response.json();
-
-    return responseData;
-  }
+  // public static async get(endpoint: string | undefined) {
+  //   if (typeof(endpoint)==='undefined') {
+  //     throw("App misconfiguration: API endpoint declaration not found. Check your .env file.");
+  //   }
+  //
+  //   const [token, tokenType] = this.getToken();
+  //
+  //   const response = await fetch(
+  //     process.env.REACT_APP_STRAVA_API_BASE_URL + endpoint,
+  //     {
+  //     method: 'GET',
+  //     mode: 'cors',
+  //     headers: {
+  //       'Accept': 'application/json',
+  //       'Content-Type': 'application/json',
+  //       'Authorization': tokenType + ' ' + token,
+  //     }
+  //   });
+  //
+  //   if (!response.ok) {
+  //     throw("Fetching of Strava API endpoint " + endpoint + " has failed: " + response.statusText);
+  //   }
+  //
+  //   const responseData = await response.json();
+  //
+  //   return responseData;
+  // }
 }
