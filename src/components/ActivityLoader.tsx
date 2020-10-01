@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import ActivityQuery from "../models/ActivityQuery";
 import {SummaryActivity} from "../classes/strava/models";
-import Activity, {Activities} from "../models/Activity";
-import StravaAPI from "../classes/strava/StravaAPI";
+import Activity from "../models/Activity";
 import {Strava} from "../classes/strava/Strava";
+import {getToken} from "../models/AuthenticationData";
+import FilteredActivities from "../classes/FilteredActivities";
 
 interface SavedQueryResponse {
   query: ActivityQuery,
@@ -12,7 +13,7 @@ interface SavedQueryResponse {
 
 interface ActivityLoaderProps {
   queries: Array<ActivityQuery>;
-  onActivitiesUpdate: (newActivities: Activities) => void
+  onActivitiesUpdate: (newActivities: FilteredActivities) => void
 }
 
 interface ActivityLoaderState {
@@ -23,6 +24,8 @@ const ActivityLoader = (props: ActivityLoaderProps) => {
   const [state, setState] = useState<ActivityLoaderState>({
     savedResponses: [],
   });
+
+  const queries = props.queries;
 
   useEffect(() => {
     const saveActivityResponse = (query: ActivityQuery, index: number, data: Array<SummaryActivity>) => {
@@ -55,26 +58,26 @@ const ActivityLoader = (props: ActivityLoaderProps) => {
     }
 
     (async () => {
-      const newActivities: Activities = new Activities();
+      let newActivities: FilteredActivities = new FilteredActivities();
       await Promise.all(
-        props.queries.map(async (query, index: number) => {
+        queries.map(async (query, index: number) => {
           let savedResponse = getSavedActivityQueryResponse(query, index);
 
           if (savedResponse) {
-            newActivities.add(savedResponse);
+            newActivities.addFromArray(savedResponse);
           } else {
             // const returnedActivities: Array<Activity> = await StravaAPI.get('/athlete/activities');
-            const [token] = StravaAPI.getToken();
+            const [token] = getToken();
             if (token) {
               const stravaApi = new Strava(token);
               const selector = query.getSelector();
               switch (selector.type) {
                 case "latest":
                   const athleteActivities: Array<Activity> = await stravaApi.getLoggedInAthleteActivities(undefined,undefined,undefined,selector.count);
-                  newActivities.add(athleteActivities);
+                  newActivities.addFromArray(athleteActivities);
+                  saveActivityResponse(query, index, athleteActivities);
+                  break;
               }
-
-              saveActivityResponse(query, index, newActivities.getAsArray());
             }
           }
         })
@@ -82,7 +85,7 @@ const ActivityLoader = (props: ActivityLoaderProps) => {
 
       props.onActivitiesUpdate(newActivities);
     })();
-  }, [props.queries]);
+  }, [queries]);
 
   return <></>;
 }

@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import StoredAuthenticationData from "./models/StoredAuthenticationData";
 import AuthorisationCallbackHandler from "./components/AuthorisationCallbackHandler";
 import ActivityBrowser from "./components/ActivityBrowser";
 import './styles/App.scss';
 import 'leaflet/dist/leaflet.css'
 import LoginPrompt from "./components/LoginPrompt";
+import {getToken} from "./models/AuthenticationData";
 
 interface AppState {
   token?: string;
@@ -20,16 +20,8 @@ function App() {
   try {
     const acceptTokenRoute = "accept_token";
 
-    const storedAuthenticationDataString = localStorage.getItem('authenticationData');
-    const storedAuthenticationData: StoredAuthenticationData | null = (storedAuthenticationDataString
-      ? JSON.parse(storedAuthenticationDataString)
-      : null
-    )
-
-    let isAuthenticated = false;
-    if (storedAuthenticationData && (Date.now() < storedAuthenticationData.expiresAt)) {
-      isAuthenticated = true;
-    }
+    const [token] = getToken();
+    const isAuthenticated = (token!==null);
 
     const oAuthUrl
       = process.env.REACT_APP_STRAVA_AUTHENTICATION_URL
@@ -55,7 +47,7 @@ function App() {
           </Route>
           <Route>
             <div className={"app"}>
-              {isAuthenticated && storedAuthenticationData
+              {isAuthenticated
                 ? <ActivityBrowser includePrivateActivities={state.includePrivateActivities}/>
                 : <div className={"login-prompt"}>
                     <LoginPrompt includePrivateActivities={state.includePrivateActivities} url={oAuthUrl} onIncludePrivateChange={handleIncludePrivateChange}/>

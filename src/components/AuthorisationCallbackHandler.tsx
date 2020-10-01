@@ -1,8 +1,7 @@
 import React from 'react';
-import {useHistory, RouteComponentProps, withRouter} from 'react-router-dom';
+import {RouteComponentProps, withRouter} from 'react-router-dom';
 import queryString from 'query-string';
-import StravaAPI from "../classes/strava/StravaAPI";
-import StoredAuthenticationData from "../models/StoredAuthenticationData";
+import AuthenticationData from "../models/AuthenticationData";
 
 interface AuthStoreProps extends RouteComponentProps {
 }
@@ -10,15 +9,39 @@ interface AuthStoreProps extends RouteComponentProps {
 const AuthorisationCallbackHandler = (props: AuthStoreProps) => {
   const mainAppRoute = "/";
 
+  const post = async (endpoint: string | undefined, parameters: Object) => {
+    if (typeof(endpoint)==='undefined') {
+      throw new Error("App misconfiguration: API endpoint declaration not found. Check your .env file.");
+    }
+
+    const response = await fetch(process.env.REACT_APP_STRAVA_API_BASE_URL + endpoint, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(parameters)
+    });
+
+    if (!response.ok) {
+      throw new Error("Fetching of Strava API endpoint " + endpoint + " has failed: " + response.statusText);
+    }
+
+    const responseData = await response.json();
+
+    return responseData;
+  }
+
+
   async function obtainTokens(code: string) {
-    const responseData = await StravaAPI.post(process.env.REACT_APP_STRAVA_TOKEN_ROUTE, {
+    const responseData = await post(process.env.REACT_APP_STRAVA_TOKEN_ROUTE, {
       client_id: process.env.REACT_APP_STRAVA_CLIENT_ID,
       client_secret: process.env.REACT_APP_STRAVA_CLIENT_SECRET,
       code: code,
       grant_type: "authorization_code"
     });
 
-    const authenticationData: StoredAuthenticationData = {
+    const authenticationData: AuthenticationData = {
       accessToken: responseData.access_token,
       tokenType: responseData.token_type,
       //athlete: responseData.athlete,

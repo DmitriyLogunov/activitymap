@@ -10,7 +10,7 @@ interface ActivityFilterEditorProps extends EditorProps<ActivityFilter> {}
 
 const ActivityFilterEditor = (props: ActivityFilterEditorProps) => {
   const [state, setState] = useState<ActivityFilterEditorState>({
-    filter: new ActivityFilter(props.itemBeingEdited.get()),
+    filter: new ActivityFilter(props.allItems[props.indexOfItemBeingEdited].get()),
   });
 
   const filterValueInput = (() => {

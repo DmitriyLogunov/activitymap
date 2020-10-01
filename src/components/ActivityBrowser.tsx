@@ -1,8 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import '../styles/ActivityBrowser.css';
 import ActivityMap from "./ActivityMap";
-import StravaAPI from "../classes/strava/StravaAPI";
-import {SummaryActivity} from "../classes/strava/models";
 import ActivitySummary from "./ActivitySummary";
 import SidePanel from "./SidePanel";
 import BottomPanel from "./BottomPanel";
@@ -12,13 +10,13 @@ import ActivityFilter from "../models/ActivityFilter";
 import ActivityQuery, {ActivityQueryData} from "../models/ActivityQuery";
 import MultipleSelectionWidget from "./MultipleSelectionWidget";
 import withActivityQueries from "../hoc/withActivityQueries";
-import Activity, {Activities} from "../models/Activity";
-import FilteredActivities from "../models/FilteredActivities";
+import FilteredActivities from "../classes/FilteredActivities";
 import ActivityLoader from "./ActivityLoader";
+import Activity from "../models/Activity";
 
 
 interface ActivityBrowserState {
-  activities: Activities;
+  activities?: FilteredActivities;
   queries: Array<ActivityQuery>;
   filters: Array<ActivityFilter>;
 }
@@ -37,16 +35,11 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
   };
 
   const [state, setState] = useState<ActivityBrowserState>({
-    activities: new Activities(),
     queries: [new ActivityQuery(queryDefaults)],
     filters: [],
   });
 
   const handleQueryUpdate = (newQueryData: ActivityQuery, index: number) => {
-    // TODO find difference between old and new selection itemArray and possibly decide that API call to Strava isn't needed
-    // e.g. instead of 50 activities, loading 10 with rest of query being same, or reducing date range
-    // check what state update lifecycle method can be used for this
-
     const newQueries = state.queries.slice();
     newQueries[index] = newQueryData;
 
@@ -76,7 +69,7 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
     })
   }
 
-  const handleActivityListUpdate = (newActivities: Activities) => {
+  const handleActivityListUpdate = (newActivities: FilteredActivities) => {
     setState({
       ...state,
       activities: newActivities
@@ -89,8 +82,7 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
   const ActivityQueriesWidget = withActivityQueries(MultipleSelectionWidget);
   const ActivityFiltersWidget = withActivityFilters(MultipleSelectionWidget);
 
-  // TODO apply filters and move into updater func
-  const filteredActivities = new FilteredActivities(state.activities);
+  const filteredActivities = state.activities? state.activities : new FilteredActivities();
 
   return (
     <div className="activity-browser">
@@ -98,11 +90,15 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
       <ActivityMap filteredActivities={filteredActivities} />
       <SidePanel side={"left"}>
         <h3>Select activities:</h3>
-        <ActivityQueriesWidget itemArray={state.queries} newItem={new ActivityQuery(queryDefaults)} onItemUpdate={handleQueryUpdate} onItemAdd={handleQueryAdd} onItemDelete={handleQueryDelete}/>
+        <ActivityQueriesWidget itemArray={state.queries} newItem={new ActivityQuery(queryDefaults)}
+                               onItemUpdate={handleQueryUpdate} onItemAdd={handleQueryAdd}
+                               onItemDelete={handleQueryDelete} maxItemCount={3}/>
         <h3>Apply filters:</h3>
-        <ActivityFiltersWidget itemArray={new Array<ActivityFilter>()} newItem={new ActivityFilter({filterType: "keyWord", filterRule: "foo"})} onItemUpdate={handleActivityFilterUpdate}/>
+        <ActivityFiltersWidget itemArray={new Array<ActivityFilter>()}
+                               newItem={new ActivityFilter({filterType: "keyWord", filterRule: "foo"})}
+                               onItemUpdate={handleActivityFilterUpdate}/>
         <h3>Activity summary:</h3>
-        <ActivitySummary filteredActivities={filteredActivities} />
+        <ActivitySummary filteredActivities={filteredActivities}/>
       </SidePanel>
       <SidePanel side={"right"}>
         <h3>Activity list:</h3>

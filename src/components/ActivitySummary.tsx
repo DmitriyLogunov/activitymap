@@ -1,5 +1,5 @@
 import React from "react";
-import FilteredActivities from "../models/FilteredActivities";
+import FilteredActivities from "../classes/FilteredActivities";
 import NumberFormat from "react-number-format";
 
 interface ActivitySummaryProps {
@@ -12,7 +12,10 @@ const ActivitySummary = (props: ActivitySummaryProps) => {
   let count = filteredActivities.length;
   let totalDistance = 0;
 
-  for (const activity of filteredActivities) {
+  for (const {activity, isMatching} of filteredActivities) {
+    if (!isMatching) {
+      continue;
+    }
     totalDistance += activity.distance;
   }
 

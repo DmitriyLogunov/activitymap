@@ -12,7 +12,8 @@ interface ActivityQueryEditorState {
 type ActivityQueryEditorProps = EditorProps<ActivityQuery>;
 
 const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
-  const selector = props.itemBeingEdited.get().selector;
+  const itemBeingEdited = props.allItems[props.indexOfItemBeingEdited];
+  const selector = itemBeingEdited.get().selector;
   const [state, setState] = useState<ActivityQueryEditorState>({
     ...selector
   });
@@ -72,7 +73,7 @@ const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
     if (selector) {
       const newActivityQuery = new ActivityQuery({
         selector: selector,
-        includePrivate: props.itemBeingEdited.get().includePrivate,
+        includePrivate: itemBeingEdited.get().includePrivate,
       });
 
       props.onEditApply(newActivityQuery);

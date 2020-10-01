@@ -12,6 +12,7 @@ export interface MultipleSelectionBaseProps<T> {
   onItemAdd?: (newItemValue: T) => void;
   onItemUpdate?: (newItemValue: T, index: number) => void;
   onItemDelete?: (index: number) => void;
+  maxItemCount?: number;
 }
 
 export interface BaseSelectionItem {
@@ -23,7 +24,8 @@ export interface RendererProps<T> {
 }
 
 export interface EditorProps<T> {
-  itemBeingEdited: T,
+  indexOfItemBeingEdited: number,
+  allItems: Array<T>,
   onEditApply: (newSelection: T) => void;
   onEditCancel: () => void;
 }
@@ -129,7 +131,8 @@ function MultipleSelectionWidget<T extends BaseSelectionItem>(props: MultipleSel
           </>
         case "edit":
           return <div className="item-editor"><ItemEditor
-            itemBeingEdited={item}
+            indexOfItemBeingEdited={index}
+            allItems={props.itemArray}
             onEditApply={(newSelectionData) => handleEditorApplyClick(newSelectionData, index)}
             onEditCancel={() => handleEditorCancelClick(index)}
           /></div>
@@ -153,12 +156,19 @@ function MultipleSelectionWidget<T extends BaseSelectionItem>(props: MultipleSel
       (() => {
         switch (state.newItemEditorState) {
           case "hidden":
-            return <button className="item-addbutton" onClick={() => handleAddClick()}>Add</button>
+            if (props.maxItemCount && props.itemArray.length>=props.maxItemCount) {
+              return "";
+            } else {
+              return <button className="item-addbutton" onClick={() => handleAddClick()}>Add</button>
+            }
           case "updating":
             return <div>Updating...</div>
           case "edit":
+            const tempItemsArray = props.itemArray.slice();
+            tempItemsArray.push(state.newItem);
             return <ItemEditor
-              itemBeingEdited={state.newItem}
+              allItems={tempItemsArray}
+              indexOfItemBeingEdited={tempItemsArray.length-1}
               onEditApply={(newSelectionData) => handleAddNewApplyClick(newSelectionData)}
               onEditCancel={() => handleAddNewCancelClick()}
             />
