@@ -3,14 +3,12 @@ import withLoadingIndicator, {WithLoadingIndicatorProps} from "../hoc/withLoadin
 import FilteredActivities from "../classes/FilteredActivities";
 import '../styles/ActivityList.scss';
 
-interface ActivityListProps extends WithLoadingIndicatorProps {
+interface ActivityListProps {
   filteredActivities: FilteredActivities;
   onActivitySelectionChange?: (activityId: number, newState: boolean) => {};
 }
 
-const ActivityList = withLoadingIndicator((props: ActivityListProps) => {
-  props.showIndicator();
-
+const ActivityList = (props: ActivityListProps) => {
   return (<div className="activity-list">
     <ul>
       {props.filteredActivities.getFilteredActivitiesAsArray().map(({activity, isMatching}) => {return (
@@ -31,6 +29,6 @@ const ActivityList = withLoadingIndicator((props: ActivityListProps) => {
       )})}
     </ul>
   </div>);
-});
+};
 
 export default ActivityList;

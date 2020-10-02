@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import ActivityQuery from "../models/ActivityQuery";
-import {SummaryActivity} from "../classes/strava/models";
+import {DetailedActivity, SummaryActivity} from "../classes/strava/models";
 import Activity from "../models/Activity";
 import {Strava} from "../classes/strava/Strava";
 import {getToken} from "../models/AuthenticationData";

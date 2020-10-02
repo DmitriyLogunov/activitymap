@@ -2,8 +2,8 @@ import React, {useState} from "react";
 import '../styles/WithLoadingIndicator.css'
 
 export interface WithLoadingIndicatorProps {
-  showIndicator: () => void,
-  hideIndicator: () => void,
+  showLoadingIndicator: () => void,
+  hideLoadingIndicator: () => void,
 }
 
 export default function withLoadingIndicator<CombinedHocProps extends WithLoadingIndicatorProps>(Component: React.ComponentType<CombinedHocProps>) {
@@ -22,7 +22,7 @@ export default function withLoadingIndicator<CombinedHocProps extends WithLoadin
     return (
     <>
       <div className="component-container">
-        <Component {...props as CombinedHocProps} showIndicator={showIndicator} hideIndicator={hideIndicator} />
+        <Component {...props as CombinedHocProps} showLoadingIndicator={showIndicator} hideLoadingIndicator={hideIndicator} />
       </div>
       {(isVisible)
         ?

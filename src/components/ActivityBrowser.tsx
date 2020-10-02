@@ -12,7 +12,8 @@ import MultipleSelectionWidget from "./MultipleSelectionWidget";
 import withActivityQueries from "../hoc/withActivityQueries";
 import FilteredActivities from "../classes/FilteredActivities";
 import ActivityLoader from "./ActivityLoader";
-import Activity from "../models/Activity";
+import ActivityCSV from "./ActivityCSV";
+import withLoadingIndicator, {WithLoadingIndicatorProps} from "../hoc/withLoadingIndicator";
 
 
 interface ActivityBrowserState {
@@ -21,11 +22,12 @@ interface ActivityBrowserState {
   filters: Array<ActivityFilter>;
 }
 
-interface ActivityBrowserProps {
+interface ActivityBrowserProps extends WithLoadingIndicatorProps {
   includePrivateActivities: boolean;
+  showAsCSV?: boolean;
 }
 
-const ActivityBrowser = (props: ActivityBrowserProps) => {
+const ActivityBrowser = withLoadingIndicator((props: ActivityBrowserProps) => {
   const queryDefaults: ActivityQueryData = {
     selector: {
       type: "latest",
@@ -87,7 +89,10 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
   return (
     <div className="activity-browser">
       <ActivityLoader queries={state.queries} onActivitiesUpdate={handleActivityListUpdate} />
-      <ActivityMap filteredActivities={filteredActivities} />
+      {(props.showAsCSV)
+        ? <ActivityCSV filteredActivities={filteredActivities} />
+        : <ActivityMap filteredActivities={filteredActivities} />
+      }
       <SidePanel side={"left"}>
         <h3>Select activities:</h3>
         <ActivityQueriesWidget itemArray={state.queries} newItem={new ActivityQuery(queryDefaults)}
@@ -109,6 +114,6 @@ const ActivityBrowser = (props: ActivityBrowserProps) => {
       </BottomPanel>
     </div>
   )
-}
+});
 
 export default ActivityBrowser;

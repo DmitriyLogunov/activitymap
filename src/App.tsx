@@ -45,6 +45,14 @@ function App() {
           <Route path={"/" + acceptTokenRoute}>
             <AuthorisationCallbackHandler />
           </Route>
+          <Route path={"/csv"}>
+            {isAuthenticated
+              ? <ActivityBrowser includePrivateActivities={state.includePrivateActivities} showAsCSV={true}/>
+              : <div className={"login-prompt"}>
+                <LoginPrompt includePrivateActivities={state.includePrivateActivities} url={oAuthUrl} onIncludePrivateChange={handleIncludePrivateChange}/>
+              </div>
+            }
+          </Route>
           <Route>
             <div className={"app"}>
               {isAuthenticated
