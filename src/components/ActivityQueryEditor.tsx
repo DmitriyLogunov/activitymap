@@ -1,12 +1,13 @@
 import React, {useState} from "react";
 import ActivityQuery, {ActivitySelector} from "../models/ActivityQuery";
 import {EditorProps} from "./MultipleSelectionWidget";
+import ReactDatePicker from "react-datepicker";
 
 interface ActivityQueryEditorState {
   type: string;
   count?: number;
-  startDate?: number;
-  endDate?: number;
+  startDate?: Date;
+  endDate?: Date;
 }
 
 type ActivityQueryEditorProps = EditorProps<ActivityQuery>;
@@ -18,6 +19,13 @@ const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
     ...selector
   });
 
+  const handleTypeChange = (newType: string) => {
+    setState({
+      ...state,
+      type: newType,
+    });
+  }
+
   const handleCountChange = (newCount: number): void => {
     setState({
       ...state,
@@ -26,11 +34,36 @@ const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
     });
   }
 
-  const handleTypeChange = (newType: string) => {
-    setState({
-      ...state,
-      type: newType,
-    });
+  const extractDate = (date: null | Date | [Date, Date]): Date | null => {
+    if (date instanceof Array) {
+      return date[0];
+    } else {
+      return date;
+    }
+  }
+
+  const handleStartDateChange = (newStartDate: null | Date | [Date, Date]): void => {
+    const newStartDateValue = extractDate(newStartDate);
+
+    if (newStartDateValue) {
+      setState({
+        ...state,
+        type: "dateRange",
+        startDate: newStartDateValue,
+      })
+    }
+  }
+
+  const handleEndDateChange = (newEndDate: null | Date | [Date, Date]): void => {
+    const newEndDateValue = extractDate(newEndDate);
+
+    if (newEndDateValue) {
+      setState({
+        ...state,
+        type: "dateRange",
+        endDate: newEndDateValue,
+      })
+    }
   }
 
   const getSelector = (): ActivitySelector | null => {
@@ -101,6 +134,17 @@ const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
           >
           </input>
         </label>
+      case "dateRange":
+        return <>
+          <label>
+            From:
+            <ReactDatePicker selected={state.startDate} onChange={date => handleStartDateChange(date)} selectsStart />
+          </label>
+          <label>
+            To:
+            <ReactDatePicker selected={state.endDate} onChange={date => handleEndDateChange(date)} selectsEnd />
+          </label>
+        </>
       default:
         return <></>
     }
@@ -112,7 +156,7 @@ const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
           Select by:
           <select name="type" onChange={(event: React.ChangeEvent<HTMLSelectElement>) => handleTypeChange(event.target.value)}>
             <option value={"latest"}>Latest activities</option>
-            <option value={"startDate"}>Latest, from selected date</option>
+            {/*<option value={"startDate"}>Latest, from selected date</option>*/}
             <option value={"dateRange"}>Date range</option>
           </select>
         </label>

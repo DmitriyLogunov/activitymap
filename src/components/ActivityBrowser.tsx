@@ -97,7 +97,7 @@ const ActivityBrowser = withLoadingIndicator((props: ActivityBrowserProps) => {
         <h3>Select activities:</h3>
         <ActivityQueriesWidget itemArray={state.queries} newItem={new ActivityQuery(queryDefaults)}
                                onItemUpdate={handleQueryUpdate} onItemAdd={handleQueryAdd}
-                               onItemDelete={handleQueryDelete} maxItemCount={3}/>
+                               onItemDelete={handleQueryDelete} maxItemCount={2}/>
         <h3>Apply filters:</h3>
         <ActivityFiltersWidget itemArray={new Array<ActivityFilter>()}
                                newItem={new ActivityFilter({filterType: "keyWord", filterRule: "foo"})}

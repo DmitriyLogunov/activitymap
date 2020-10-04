@@ -10,13 +10,13 @@ export type ActivitySelector =
   |
   {
     type: "startDate",
-    startDate: number,
+    startDate: Date,
   }
   |
   {
     type: "dateRange",
-    startDate: number,
-    endDate: number,
+    startDate: Date,
+    endDate: Date,
   }
 
 export interface ActivityQueryData {
