@@ -27,7 +27,7 @@ const ActivityCSV = (props: ActivityCSVProps) => {
           if (isMatching) {
             for (const key of Object.getOwnPropertyNames(activity)) {
                 const value = activity[key as keyof Activity];
-                if (typeof value !== 'object') {
+                if (typeof value !== 'object' && value) {
                   csvString += value.toString();
                 }
                 csvString += ",";

@@ -1,3 +1,5 @@
 import {SummaryActivity} from "../classes/strava/models";
 
-export default interface Activity extends SummaryActivity {};
+export default interface Activity extends SummaryActivity {
+  isSelected?: boolean;
+};
