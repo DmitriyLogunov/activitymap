@@ -1,8 +1,8 @@
 import React from "react";
 import ActivityQuery from "../models/ActivityQuery";
-import {RendererProps} from "./MultipleSelectionWidget";
+import {ItemRendererProps} from "./CollectionEditor";
 
-interface ActivityQueryRendererProps extends RendererProps<ActivityQuery> {}
+interface ActivityQueryRendererProps extends ItemRendererProps<ActivityQuery> {}
 
 const ActivityQueryRenderer = (props: ActivityQueryRendererProps) => {
   const item = props.itemBeingRendered.get();

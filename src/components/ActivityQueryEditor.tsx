@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import ActivityQuery, {ActivitySelector} from "../models/ActivityQuery";
-import {EditorProps} from "./MultipleSelectionWidget";
+import {ItemEditorProps} from "./CollectionEditor";
 import ReactDatePicker from "react-datepicker";
 
 interface ActivityQueryEditorState {
@@ -10,7 +10,7 @@ interface ActivityQueryEditorState {
   endDate?: Date;
 }
 
-type ActivityQueryEditorProps = EditorProps<ActivityQuery>;
+type ActivityQueryEditorProps = ItemEditorProps<ActivityQuery>;
 
 const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
   const itemBeingEdited = props.allItems[props.indexOfItemBeingEdited];

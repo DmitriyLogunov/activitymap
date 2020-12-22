@@ -1,4 +1,4 @@
-import {BaseSelectionItem} from "../components/MultipleSelectionWidget";
+import {CollectionEditorBaseItem} from "./CollectionEditorBaseItem";
 
 export type ActivitySelectorTypes = "latest" | "dateRange" | "startDate";
 
@@ -24,7 +24,7 @@ export interface ActivityQueryData {
   includePrivate: boolean;
 }
 
-export default class ActivityQuery implements BaseSelectionItem {
+export default class ActivityQuery implements CollectionEditorBaseItem {
   private activityQueryData: ActivityQueryData;
   private static keyCounter = 0;
 

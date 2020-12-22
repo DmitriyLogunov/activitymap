@@ -1,8 +1,8 @@
 import React from "react";
 import ActivityFilter from "../models/ActivityFilter";
-import {RendererProps} from "./MultipleSelectionWidget";
+import {ItemRendererProps} from "./CollectionEditor";
 
-interface ActivityFilterRendererProps extends RendererProps<ActivityFilter> {}
+interface ActivityFilterRendererProps extends ItemRendererProps<ActivityFilter> {}
 
 const ActivityFilterRenderer = (props: ActivityFilterRendererProps) => {
   return (<div>A</div>);
