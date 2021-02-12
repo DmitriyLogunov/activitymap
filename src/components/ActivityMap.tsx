@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import '../styles/ActivityMap.css';
-import {Map, Marker, Polyline, Popup, TileLayer} from 'react-leaflet';
+import {MapContainer, Marker, Polyline, Popup, TileLayer} from 'react-leaflet';
 import L, {LatLng} from 'leaflet';
 import polyUtil from 'polyline-encoded';
 import FilteredActivities from "../classes/FilteredActivities";
@@ -47,7 +47,7 @@ const ActivityMap = (props: ActivityMapProps) => {
 
   return (
     <div className="activity-map">
-      <Map center={mapCenter} zoom={state.zoom}>
+      <MapContainer center={mapCenter} zoom={state.zoom}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
@@ -56,7 +56,7 @@ const ActivityMap = (props: ActivityMapProps) => {
         {polylines.map((polyline, index) =>
           <Polyline key={index} color="blue" positions={polyline} />
         )}
-      </Map>
+      </MapContainer>
     </div>
   );
 }
