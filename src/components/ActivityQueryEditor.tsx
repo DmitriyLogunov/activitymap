@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import ActivityQuery, {ActivitySelector} from "../models/ActivityQuery";
-import {EditorProps} from "./MultipleSelectionWidget";
+import {ItemEditorProps} from "./CollectionEditor";
 import ReactDatePicker from "react-datepicker";
 
 interface ActivityQueryEditorState {
@@ -10,7 +10,9 @@ interface ActivityQueryEditorState {
   endDate?: Date;
 }
 
-type ActivityQueryEditorProps = EditorProps<ActivityQuery>;
+type ActivityQueryEditorProps = ItemEditorProps<ActivityQuery>;
+
+type ReactDatePickerDate = Date | [Date | null, Date | null] | /* for selectsRange */ null;
 
 const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
   const itemBeingEdited = props.allItems[props.indexOfItemBeingEdited];
@@ -34,7 +36,7 @@ const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
     });
   }
 
-  const extractDate = (date: null | Date | [Date, Date]): Date | null => {
+  const extractDate = (date: ReactDatePickerDate): Date | null => {
     if (date instanceof Array) {
       return date[0];
     } else {
@@ -42,7 +44,7 @@ const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
     }
   }
 
-  const handleStartDateChange = (newStartDate: null | Date | [Date, Date]): void => {
+  const handleStartDateChange = (newStartDate: ReactDatePickerDate): void => {
     const newStartDateValue = extractDate(newStartDate);
 
     if (newStartDateValue) {
@@ -54,7 +56,7 @@ const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
     }
   }
 
-  const handleEndDateChange = (newEndDate: null | Date | [Date, Date]): void => {
+  const handleEndDateChange = (newEndDate: ReactDatePickerDate): void => {
     const newEndDateValue = extractDate(newEndDate);
 
     if (newEndDateValue) {

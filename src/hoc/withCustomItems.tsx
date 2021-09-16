@@ -1,12 +1,12 @@
 import React from "react";
-import {EditorProps, MultipleSelectionCustomRendererProps, RendererProps} from "../components/MultipleSelectionWidget";
+import {ItemEditorProps, CollectionEditorAddedProps, ItemRendererProps} from "../components/CollectionEditor";
 
-export default function withCustomItems<T, CombinedHOCProps extends MultipleSelectionCustomRendererProps<T>, >(
+export default function withCustomItems<T, CombinedHOCProps extends CollectionEditorAddedProps<T>, >(
   Component: React.ComponentType<CombinedHOCProps>,
-  Renderer: React.ComponentType<RendererProps<T>>,
-  Editor: React.ComponentType<EditorProps<T>>,
+  Renderer: React.ComponentType<ItemRendererProps<T>>,
+  Editor: React.ComponentType<ItemEditorProps<T>>,
 ) {
-  type ReturnedComponentProps = Omit<CombinedHOCProps, keyof MultipleSelectionCustomRendererProps<T>>;
+  type ReturnedComponentProps = Omit<CombinedHOCProps, keyof CollectionEditorAddedProps<T>>;
   return (props: ReturnedComponentProps) => {
     return (
       <Component

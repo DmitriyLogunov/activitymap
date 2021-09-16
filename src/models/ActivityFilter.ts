@@ -1,5 +1,5 @@
-import {BaseSelectionItem} from "../components/MultipleSelectionWidget";
 import md5 from "md5";
+import {CollectionEditorBaseItem} from "./CollectionEditorBaseItem";
 
 type FilterDefinition =
   {
@@ -12,7 +12,7 @@ type FilterDefinition =
     filterRule: string
   };
 
-export default class ActivityFilter implements BaseSelectionItem {
+export default class ActivityFilter implements CollectionEditorBaseItem {
   private filter: FilterDefinition;
   public key: string;
 

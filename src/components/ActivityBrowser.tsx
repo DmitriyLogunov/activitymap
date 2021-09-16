@@ -8,7 +8,7 @@ import ActivityList from "./ActivityList";
 import withActivityFilters from "../hoc/withActivityFilters";
 import ActivityFilter from "../models/ActivityFilter";
 import ActivityQuery, {ActivityQueryData} from "../models/ActivityQuery";
-import MultipleSelectionWidget from "./MultipleSelectionWidget";
+import CollectionEditor from "./CollectionEditor";
 import withActivityQueries from "../hoc/withActivityQueries";
 import FilteredActivities from "../classes/FilteredActivities";
 import ActivityLoader from "./ActivityLoader";
@@ -81,8 +81,8 @@ const ActivityBrowser = withLoadingIndicator((props: ActivityBrowserProps) => {
   const handleActivityFilterUpdate = (item: ActivityFilter, index: number) => {
   }
 
-  const ActivityQueriesWidget = withActivityQueries(MultipleSelectionWidget);
-  const ActivityFiltersWidget = withActivityFilters(MultipleSelectionWidget);
+  const ActivityQueriesWidget = withActivityQueries(CollectionEditor);
+  const ActivityFiltersWidget = withActivityFilters(CollectionEditor);
 
   const filteredActivities = state.activities? state.activities : new FilteredActivities();
 

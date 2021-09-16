@@ -1,12 +1,19 @@
 import React, {useState} from "react";
-import '../styles/MultipleSelectionWidget.scss';
+import '../styles/CollectionEditor.scss';
+import {CollectionEditorBaseItem} from "../models/CollectionEditorBaseItem";
 
-export interface MultipleSelectionCustomRendererProps<T> {
-  ItemRenderer: React.ComponentType<RendererProps<T>>;
-  ItemEditor: React.ComponentType<EditorProps<T>>;
+export interface ItemRendererProps<T> {
+  itemBeingRendered: T,
 }
 
-export interface MultipleSelectionBaseProps<T> {
+export interface ItemEditorProps<T> {
+  indexOfItemBeingEdited: number,
+  allItems: Array<T>,
+  onEditApply: (newSelection: T) => void;
+  onEditCancel: () => void;
+}
+
+export interface CollectionEditorBaseProps<T> {
   itemArray: Array<T>;
   newItem?: T;
   onItemAdd?: (newItemValue: T) => void;
@@ -15,22 +22,12 @@ export interface MultipleSelectionBaseProps<T> {
   maxItemCount?: number;
 }
 
-export interface BaseSelectionItem {
-  key: string;
+export interface CollectionEditorAddedProps<T> {
+  ItemRenderer: React.ComponentType<ItemRendererProps<T>>;
+  ItemEditor: React.ComponentType<ItemEditorProps<T>>;
 }
 
-export interface RendererProps<T> {
-  itemBeingRendered: T,
-}
-
-export interface EditorProps<T> {
-  indexOfItemBeingEdited: number,
-  allItems: Array<T>,
-  onEditApply: (newSelection: T) => void;
-  onEditCancel: () => void;
-}
-
-export interface MultipleSelectionCombinedProps<T> extends MultipleSelectionBaseProps<T>, MultipleSelectionCustomRendererProps<T> {
+export interface CollectionEditorCombinedProps<T> extends CollectionEditorBaseProps<T>, CollectionEditorAddedProps<T> {
 }
 
 interface MultipleSelectionState<T> {
@@ -41,7 +38,7 @@ interface MultipleSelectionState<T> {
 
 type EditorState = "view" | "edit" | "updating" | "deleting" | "hidden";
 
-function MultipleSelectionWidget<T extends BaseSelectionItem>(props: MultipleSelectionCombinedProps<T>) {
+function CollectionEditor<T extends CollectionEditorBaseItem>(props: CollectionEditorCombinedProps<T>) {
   const [state, setState] = useState<MultipleSelectionState<T>>({
     editorStates: Array(props.itemArray.length).fill("view"),
     newItem: props.newItem,
@@ -189,4 +186,4 @@ function MultipleSelectionWidget<T extends BaseSelectionItem>(props: MultipleSel
   )
 }
 
-export default MultipleSelectionWidget
+export default CollectionEditor
