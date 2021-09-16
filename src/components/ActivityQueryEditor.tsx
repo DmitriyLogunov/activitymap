@@ -12,6 +12,8 @@ interface ActivityQueryEditorState {
 
 type ActivityQueryEditorProps = ItemEditorProps<ActivityQuery>;
 
+type ReactDatePickerDate = Date | [Date | null, Date | null] | /* for selectsRange */ null;
+
 const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
   const itemBeingEdited = props.allItems[props.indexOfItemBeingEdited];
   const selector = itemBeingEdited.get().selector;
@@ -34,7 +36,7 @@ const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
     });
   }
 
-  const extractDate = (date: null | Date | [Date, Date]): Date | null => {
+  const extractDate = (date: ReactDatePickerDate): Date | null => {
     if (date instanceof Array) {
       return date[0];
     } else {
@@ -42,7 +44,7 @@ const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
     }
   }
 
-  const handleStartDateChange = (newStartDate: null | Date | [Date, Date]): void => {
+  const handleStartDateChange = (newStartDate: ReactDatePickerDate): void => {
     const newStartDateValue = extractDate(newStartDate);
 
     if (newStartDateValue) {
@@ -54,7 +56,7 @@ const ActivityQueryEditor = (props: ActivityQueryEditorProps) => {
     }
   }
 
-  const handleEndDateChange = (newEndDate: null | Date | [Date, Date]): void => {
+  const handleEndDateChange = (newEndDate: ReactDatePickerDate): void => {
     const newEndDateValue = extractDate(newEndDate);
 
     if (newEndDateValue) {
