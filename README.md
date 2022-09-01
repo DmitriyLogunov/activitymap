@@ -2,26 +2,23 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Prerequisites
 
-- Have Node and NPM installed on the system (no specific version, just the latest versions are ok)
+- Node and NPM installed (latest, no specific version requirement)
+
+## Configuration and library dependencies
+
+- Copy .env.example to .env and fill in a Strava API key (this will be changed in production deploy, secret keys should not be in .env)
 - Run `npm install`
 
-## Configuration
+## Available Build Scripts
 
-Copy .env.example to .env and fill in a Strava API key (this will be changed in production deploy, secret keys should not be in .env)
-
-Modify the rest of the attributes if needed 
-
-## Available Scripts
-
-In the project directory, you can run:
+The standard set of the build scripts for create-react-app. In the project directory, run:
 
 ### `npm start`
 
-Runs the app in the development mode.<br />
+Starts the application in development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+The page will refresh on code edits and lint warnings will be displayed in the console.
 
 ### `npm run-script test`
 
